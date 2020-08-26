@@ -115,7 +115,7 @@ A Flutter package for displaying overlay tutorial.
 
 ## Screenshot
 
-![](https://github.com/TabooSun/overlay_tutorial/blob/master/example/images/example_screenshot.png =250x)
+![](https://github.com/TabooSun/overlay_tutorial/blob/master/example/images/example_screenshot.png | width=250)
 
 ## API
 
