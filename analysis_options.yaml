@@ -1,0 +1,15 @@
+include: package:pedantic/analysis_options.yaml
+
+analyzer:
+  exclude: [build/**]
+  errors:
+    invalid_use_of_protected_member: error
+#    prefer_final_fields: error
+
+linter:
+  rules:
+    curly_braces_in_flow_control_structures: false
+    prefer_final_fields: true
+    unawaited_futures: true
+    prefer_final_locals: true
+    prefer_final_in_for_each: true
