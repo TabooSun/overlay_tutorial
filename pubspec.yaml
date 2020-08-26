@@ -1,8 +1,7 @@
 name: overlay_tutorial
 description: A Flutter package for displaying overlay tutorial.
 version: 0.0.1
-author: Mok Kah Wai
-homepage:
+repository: https://github.com/TabooSun/overlay_tutorial
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -17,6 +16,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   git: ^1.0.1
+  args: ^1.6.0
+  path: ^1.6.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
