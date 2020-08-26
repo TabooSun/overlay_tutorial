@@ -1,10 +1,7 @@
 library overlay_tutorial;
 
 import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 
-import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,31 +75,38 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future(() async {
-        try {
-          for (final x in widget.overlayTutorialEntries) {
-            for (final element in x.overlayTutorialHints
-                .whereType<OverlayTutorialImageHint>()) {
-              await element.loadUiImage();
-            }
-          }
-        } catch (ex, stackTrace) {
-          print(ex);
-          print(stackTrace);
-        }
-      }),
-      builder: (context, snapshot) => CustomPaint(
-        child: widget.child,
-        foregroundPainter: _showOverlay
-            ? _TutorialPaint(
-                context,
-                overlayTutorialEntries: widget.overlayTutorialEntries,
-                entryRects: _entryRects,
-                overlayColor: widget.overlayColor,
-              )
-            : null,
-      ),
+    return Stack(
+      children: <Widget>[
+        CustomPaint(
+          child: widget.child,
+          foregroundPainter: _showOverlay
+              ? _TutorialPaint(
+                  context,
+                  overlayTutorialEntries: widget.overlayTutorialEntries,
+                  entryRects: _entryRects,
+                  overlayColor: widget.overlayColor,
+                )
+              : null,
+        ),
+        ...widget.overlayTutorialEntries
+            .map((entry) {
+              return entry.overlayTutorialHints.map((hint) {
+                if (hint is OverlayTutorialWidgetHint) {
+                  final entryRect = _entryRects[entry.widgetKey];
+                  if (entryRect == null) return SizedBox.shrink();
+                  final position = hint.position(entryRect);
+                  return Positioned(
+                    left: position.dx,
+                    top: position.dy,
+                    child: hint.child,
+                  );
+                } else
+                  return null;
+              }).toList();
+            })
+            .expand((x) => x)
+            .toList()
+      ],
     );
   }
 }
@@ -132,7 +136,7 @@ class _TutorialPaint extends CustomPainter {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final overlayColor = this.overlayColor ??
         (isDarkTheme
-            ? Colors.white.withOpacity(0.6)
+            ? Colors.white.withOpacity(0.8)
             : Colors.black.withOpacity(0.6));
     canvas.drawPath(
       path,
@@ -161,29 +165,6 @@ class _TutorialPaint extends CustomPainter {
         path,
         Path()..addRRect(rRectToDraw),
       );
-
-      entry.overlayTutorialHints.forEach((hint) {
-        // Draw Overlay Tutorial Image
-
-        if (hint is OverlayTutorialImageHint) {
-          if (!hint.isImageReady) return;
-
-          final image = hint.toUiImage();
-          if (image == null) return;
-
-          paintImage(
-            canvas: canvas,
-            image: image,
-            rect: (rect.center + hint.positionFromEntry(rect)) &
-                (hint.size ??
-                    Size(
-                      image.width.toDouble(),
-                      image.height.toDouble(),
-                    )),
-            scale: hint.scale ?? 1.0,
-          );
-        }
-      });
     });
 
     return path;

@@ -15,79 +15,21 @@ class OverlayTutorialEntry {
 }
 
 /// [rect] is the [Rect] of [OverlayTutorialEntry].
+/// [target] is the [Size] of the [OverlayTutorialHint].
 typedef PositionFromEntryFactory = Offset Function(Rect rect);
 
 abstract class OverlayTutorialHint {
   /// The offset from a [OverlayTutorialEntry].
-  final PositionFromEntryFactory positionFromEntry;
+  final PositionFromEntryFactory position;
 
-  OverlayTutorialHint(this.positionFromEntry);
+  OverlayTutorialHint(this.position);
 }
 
-class OverlayTutorialImageHint extends OverlayTutorialHint {
-  static final _cachedImageByteArray = <String, Uint8List>{};
-  static final _cachedImages = <crypto.Digest, ui.Image>{};
-  bool _isImageReady = false;
+class OverlayTutorialWidgetHint extends OverlayTutorialHint {
+  final Widget child;
 
-  bool get isImageReady => _isImageReady;
-
-  Uint8List imageByteArray;
-
-  String _assetName;
-
-  crypto.Digest _md5Hash;
-
-  crypto.Digest get md5Hash {
-    assert(imageByteArray != null);
-    _md5Hash ??= crypto.md5.convert(imageByteArray);
-    return _md5Hash;
-  }
-
-  final Size size;
-  final double scale;
-
-  OverlayTutorialImageHint.asset(
-    PositionFromEntryFactory positionFromEntry,
-    String assetName, {
-    AssetBundle bundle,
-    this.size,
-    this.scale,
-  })  : _assetName = assetName,
-        super(positionFromEntry);
-
-  OverlayTutorialImageHint.memory(
-    PositionFromEntryFactory positionFromEntry,
-    this.imageByteArray, {
-    this.size,
-    this.scale,
-  }) : super(positionFromEntry);
-
-  Future<ui.Image> loadUiImage() async {
-    if (imageByteArray == null) {
-      if (_cachedImageByteArray[_assetName] == null) {
-        final data = await rootBundle.load(_assetName);
-        if (data == null) throw 'Unable to load asset of $_assetName';
-        _cachedImageByteArray[_assetName] = data.buffer.asUint8List();
-      }
-      imageByteArray = _cachedImageByteArray[_assetName];
-    }
-    if (_cachedImages[md5Hash] == null) {
-      final codec = await ui.instantiateImageCodec(imageByteArray);
-      final frame = await codec.getNextFrame();
-      _cachedImages[md5Hash] = frame.image;
-    }
-    _isImageReady = true;
-    return _cachedImages[md5Hash];
-  }
-
-  ui.Image toUiImage() => _cachedImages[md5Hash];
-}
-
-class OverlayTutorialTextHint extends OverlayTutorialHint {
-  final String text;
-
-  OverlayTutorialTextHint(
-    PositionFromEntryFactory positionFromEntry,
-    this.text,
-  ) : super(positionFromEntry);
+  OverlayTutorialWidgetHint(
+    PositionFromEntryFactory position, {
+    @required this.child,
+  }) : super(position);
 }
