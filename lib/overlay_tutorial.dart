@@ -12,7 +12,6 @@ part 'src/overlay_tutorial_entry.dart';
 class OverlayTutorial extends StatefulWidget {
   final Widget child;
   final List<OverlayTutorialEntry> overlayTutorialEntries;
-  final BuildContext context;
   final OverlayTutorialController controller;
   final Color overlayColor;
 
@@ -20,7 +19,6 @@ class OverlayTutorial extends StatefulWidget {
     Key key,
     this.child,
     this.overlayTutorialEntries,
-    @required this.context,
     OverlayTutorialController controller,
     this.overlayColor,
   })  : controller = controller ?? OverlayTutorialController(),
