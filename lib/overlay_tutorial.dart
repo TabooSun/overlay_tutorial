@@ -11,10 +11,25 @@ part 'src/overlay_tutorial_controller.dart';
 part 'src/overlay_tutorial_entry.dart';
 
 class OverlayTutorial extends StatefulWidget {
+  /// Used to wrap all the content containing widgets that would be used in
+  /// [overlayTutorialEntries].
+  ///
+  /// Do note that screen status bar is not handled when in use with [SafeArea].
+  /// Please make sure [child] contains [SafeArea] in order to let
+  /// [OverlayTutorialEntry] to work properly.
   final Widget child;
+
+  /// All the widget entries that needs hole.
   final List<OverlayTutorialEntry> overlayTutorialEntries;
+
+  /// This is used to show/hide this overlay tutorial
   final OverlayTutorialController controller;
+
+  /// The color of overlay
   final Color overlayColor;
+
+  /// This is rendered
+  final List<Widget> overlayChildren;
 
   OverlayTutorial({
     Key key,
@@ -22,6 +37,7 @@ class OverlayTutorial extends StatefulWidget {
     this.overlayTutorialEntries,
     OverlayTutorialController controller,
     this.overlayColor,
+    this.overlayChildren = const [],
   })  : controller = controller ?? OverlayTutorialController(),
         super(key: key);
 
@@ -62,15 +78,17 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
   }
 
   void showOverlayTutorial() {
-    setState(() {
-      _showOverlay = true;
-    });
+    if (!_showOverlay)
+      setState(() {
+        _showOverlay = true;
+      });
   }
 
   void hideOverlayTutorial() {
-    setState(() {
-      _showOverlay = false;
-    });
+    if (_showOverlay)
+      setState(() {
+        _showOverlay = false;
+      });
   }
 
   @override
@@ -105,7 +123,8 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
               }).toList();
             })
             .expand((x) => x)
-            .toList()
+            .toList(),
+        ...widget.overlayChildren,
       ],
     );
   }

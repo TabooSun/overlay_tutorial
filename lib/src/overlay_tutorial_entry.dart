@@ -1,10 +1,15 @@
 part of overlay_tutorial;
 
 class OverlayTutorialEntry {
+  /// The [GlobalKey] of the target widget that requires hole.
   final GlobalKey widgetKey;
+  /// The padding of the hole.
   final EdgeInsetsGeometry padding;
+  /// The radius of the hole.
   final Radius radius;
-  final List<OverlayTutorialHint> overlayTutorialHints;
+  /// Optional hint that can be placed beside the hole as the position of the
+  /// target widget is provided. See [PositionFromEntryFactory] for detail.
+  final List<OverlayTutorialWidgetHint> overlayTutorialHints;
 
   OverlayTutorialEntry({
     @required this.widgetKey,
@@ -15,21 +20,18 @@ class OverlayTutorialEntry {
 }
 
 /// [rect] is the [Rect] of [OverlayTutorialEntry].
-/// [target] is the [Size] of the [OverlayTutorialHint].
 typedef PositionFromEntryFactory = Offset Function(Rect rect);
 
-abstract class OverlayTutorialHint {
-  /// The offset from a [OverlayTutorialEntry].
-  final PositionFromEntryFactory position;
-
-  OverlayTutorialHint(this.position);
-}
-
-class OverlayTutorialWidgetHint extends OverlayTutorialHint {
+class OverlayTutorialWidgetHint {
   final Widget child;
 
-  OverlayTutorialWidgetHint(
-    PositionFromEntryFactory position, {
+  /// The offset from a [OverlayTutorialEntry].
+  /// If and only if this is null, [child] can be positioned by wrapping with
+  /// [Positioned] or [Center].
+  final PositionFromEntryFactory position;
+
+  OverlayTutorialWidgetHint({
+    this.position,
     @required this.child,
-  }) : super(position);
+  });
 }
