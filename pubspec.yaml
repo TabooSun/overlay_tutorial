@@ -1,6 +1,6 @@
 name: overlay_tutorial
 description: A Flutter package for displaying overlay tutorial.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/TabooSun/overlay_tutorial
 
 environment:
