@@ -1,9 +1,13 @@
 library overlay_tutorial;
 
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 part 'src/overlay_tutorial_controller.dart';
 
@@ -74,16 +78,31 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      child: widget.child,
-      foregroundPainter: _showOverlay
-          ? _TutorialPaint(
-              context,
-              overlayTutorialEntries: widget.overlayTutorialEntries,
-              entryRects: _entryRects,
-              overlayColor: widget.overlayColor,
-            )
-          : null,
+    return FutureBuilder(
+      future: Future(() async {
+        try {
+          for (final x in widget.overlayTutorialEntries) {
+            for (final element in x.overlayTutorialHints
+                .whereType<OverlayTutorialImageHint>()) {
+              await element.loadUiImage();
+            }
+          }
+        } catch (ex, stackTrace) {
+          print(ex);
+          print(stackTrace);
+        }
+      }),
+      builder: (context, snapshot) => CustomPaint(
+        child: widget.child,
+        foregroundPainter: _showOverlay
+            ? _TutorialPaint(
+                context,
+                overlayTutorialEntries: widget.overlayTutorialEntries,
+                entryRects: _entryRects,
+                overlayColor: widget.overlayColor,
+              )
+            : null,
+      ),
     );
   }
 }
@@ -108,24 +127,7 @@ class _TutorialPaint extends CustomPainter {
 
     var path = Path()..addRect(Rect.fromLTWH(0, 0, screenWidth, screenHeight));
 
-    overlayTutorialEntries.forEach((entry) {
-      final rect = entryRects[entry.widgetKey];
-      if (rect == null) return;
-
-      final padding = entry.padding.resolve(Directionality.of(context));
-      path = Path.combine(
-        PathOperation.difference,
-        path,
-        Path()
-          ..addRRect(RRect.fromLTRBR(
-            rect.left + padding.left,
-            rect.top + padding.top,
-            rect.right + padding.right,
-            rect.bottom + padding.bottom,
-            entry.radius,
-          )),
-      );
-    });
+    path = _drawTutorialEntries(canvas, path);
 
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final overlayColor = this.overlayColor ??
@@ -134,12 +136,59 @@ class _TutorialPaint extends CustomPainter {
             : Colors.black.withOpacity(0.6));
     canvas.drawPath(
       path,
-      Paint()..color = overlayColor ?? Colors.black.withOpacity(0.3),
+      Paint()..color = overlayColor,
     );
   }
 
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+  Path _drawTutorialEntries(Canvas canvas, Path path) {
+    overlayTutorialEntries.forEach((entry) {
+      final rect = entryRects[entry.widgetKey];
+      if (rect == null) return;
+
+      final padding = entry.padding.resolve(Directionality.of(context));
+      final rRectToDraw = RRect.fromLTRBR(
+        rect.left + padding.left,
+        rect.top + padding.top,
+        rect.right + padding.right,
+        rect.bottom + padding.bottom,
+        entry.radius,
+      );
+
+      // Draw Overlay Tutorial Entry
+
+      path = Path.combine(
+        PathOperation.difference,
+        path,
+        Path()..addRRect(rRectToDraw),
+      );
+
+      entry.overlayTutorialHints.forEach((hint) {
+        // Draw Overlay Tutorial Image
+
+        if (hint is OverlayTutorialImageHint) {
+          if (!hint.isImageReady) return;
+
+          final image = hint.toUiImage();
+          if (image == null) return;
+
+          paintImage(
+            canvas: canvas,
+            image: image,
+            rect: (rect.center + hint.positionFromEntry(rect)) &
+                (hint.size ??
+                    Size(
+                      image.width.toDouble(),
+                      image.height.toDouble(),
+                    )),
+            scale: hint.scale ?? 1.0,
+          );
+        }
+      });
+    });
+
+    return path;
   }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
