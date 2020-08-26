@@ -34,7 +34,7 @@ class OverlayTutorial extends StatefulWidget {
   OverlayTutorial({
     Key key,
     this.child,
-    this.overlayTutorialEntries,
+    this.overlayTutorialEntries = const [],
     OverlayTutorialController controller,
     this.overlayColor,
     this.overlayChildren = const [],
@@ -93,7 +93,9 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Stack(
+
       children: <Widget>[
         CustomPaint(
           child: widget.child,
@@ -109,17 +111,28 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
         ...widget.overlayTutorialEntries
             .map((entry) {
               return entry.overlayTutorialHints.map((hint) {
-                if (hint is OverlayTutorialWidgetHint) {
-                  final entryRect = _entryRects[entry.widgetKey];
-                  if (entryRect == null) return SizedBox.shrink();
-                  final position = hint.position(entryRect);
-                  return Positioned(
-                    left: position.dx,
-                    top: position.dy,
-                    child: hint.child,
-                  );
-                } else
-                  return null;
+                final entryRect = _entryRects[entry.widgetKey];
+                if (entryRect == null) return const SizedBox.shrink();
+
+                final rRect = OverlayTutorialEntry.applyPaddingToWidgetEntry(
+                  context,
+                  entryRect,
+                  entry,
+                );
+                if (hint.position == null)
+                  return hint.builder(context, entryRect, rRect);
+
+                final position = hint.position(entryRect);
+
+                return Positioned(
+                  left: position.dx,
+                  top: position.dy,
+                  child: hint.builder(
+                    context,
+                    entryRect,
+                    rRect,
+                  ),
+                );
               }).toList();
             })
             .expand((x) => x)
@@ -168,13 +181,10 @@ class _TutorialPaint extends CustomPainter {
       final rect = entryRects[entry.widgetKey];
       if (rect == null) return;
 
-      final padding = entry.padding.resolve(Directionality.of(context));
-      final rRectToDraw = RRect.fromLTRBR(
-        rect.left + padding.left,
-        rect.top + padding.top,
-        rect.right + padding.right,
-        rect.bottom + padding.bottom,
-        entry.radius,
+      final rRectToDraw = OverlayTutorialEntry.applyPaddingToWidgetEntry(
+        context,
+        rect,
+        entry,
       );
 
       // Draw Overlay Tutorial Entry
