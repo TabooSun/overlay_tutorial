@@ -119,36 +119,38 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
                 )
               : null,
         ),
-        ...widget.overlayTutorialEntries
-            .map((entry) {
-              return entry.overlayTutorialHints.map((hint) {
-                final entryRect = _entryRects[entry.widgetKey];
-                if (entryRect == null) return const SizedBox.shrink();
+        if (_showOverlay) ...[
+          ...widget.overlayTutorialEntries
+              .map((entry) {
+                return entry.overlayTutorialHints.map((hint) {
+                  final entryRect = _entryRects[entry.widgetKey];
+                  if (entryRect == null) return const SizedBox.shrink();
 
-                final rRect = OverlayTutorialEntry.applyPaddingToWidgetEntry(
-                  context,
-                  entryRect,
-                  entry,
-                );
-                if (hint.position == null)
-                  return hint.builder(context, entryRect, rRect);
-
-                final position = hint.position(entryRect);
-
-                return Positioned(
-                  left: position.dx,
-                  top: position.dy,
-                  child: hint.builder(
+                  final rRect = OverlayTutorialEntry.applyPaddingToWidgetEntry(
                     context,
                     entryRect,
-                    rRect,
-                  ),
-                );
-              }).toList();
-            })
-            .expand((x) => x)
-            .toList(),
-        ...widget.overlayChildren,
+                    entry,
+                  );
+                  if (hint.position == null)
+                    return hint.builder(context, entryRect, rRect);
+
+                  final position = hint.position(entryRect);
+
+                  return Positioned(
+                    left: position.dx,
+                    top: position.dy,
+                    child: hint.builder(
+                      context,
+                      entryRect,
+                      rRect,
+                    ),
+                  );
+                }).toList();
+              })
+              .expand((x) => x)
+              .toList(),
+          ...widget.overlayChildren,
+        ],
       ],
     );
   }
