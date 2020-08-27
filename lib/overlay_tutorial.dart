@@ -75,7 +75,7 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
               context.findAncestorWidgetOfExactType<SafeArea>() != null
           ? MediaQuery.of(parentContext).padding.top
           : 0.0;
-      print(topSafeArea);
+
       final rect =
           (renderBox.localToGlobal(Offset.zero) - Offset(0, topSafeArea)) &
               renderBox.size;

@@ -1,7 +1,7 @@
 name: overlay_tutorial
 description: A Flutter package for displaying overlay tutorial by cutting a hole on widget. It allows also to add hint
   aside the hole.
-version: 0.0.5
+version: 0.0.6
 repository: https://github.com/TabooSun/overlay_tutorial
 
 environment:
