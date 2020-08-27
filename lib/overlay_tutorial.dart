@@ -1,13 +1,11 @@
 library overlay_tutorial;
 
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 
 part 'src/overlay_tutorial_controller.dart';
-
 part 'src/overlay_tutorial_entry.dart';
 
 class OverlayTutorial extends StatefulWidget {
@@ -57,17 +55,25 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
   void initState() {
     super.initState();
     widget.controller._state = this;
+
+    _retrieveEntryRects();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       WidgetsBinding.instance.addPersistentFrameCallback(_onFrameUpdated);
     });
   }
 
   void _onFrameUpdated(timeStamp) {
+    _retrieveEntryRects();
+    setState(() {});
+  }
+
+  void _retrieveEntryRects() {
     final parentContext = widget.context;
 
-    _entryRects.removeWhere((key, value) =>
-        !widget.overlayTutorialEntries.any((x) => x.widgetKey == key));
-    widget.overlayTutorialEntries.forEach((entry) {
+    final overlayTutorialEntries = widget.overlayTutorialEntries;
+    _entryRects.removeWhere(
+        (key, value) => !overlayTutorialEntries.any((x) => x.widgetKey == key));
+    overlayTutorialEntries.forEach((entry) {
       final renderBox =
           entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
       if (renderBox == null) return;
@@ -126,11 +132,13 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
                   final entryRect = _entryRects[entry.widgetKey];
                   if (entryRect == null) return const SizedBox.shrink();
 
-                  final rRect = OverlayTutorialEntry.applyPaddingToWidgetEntry(
-                    context,
-                    entryRect,
-                    entry,
-                  );
+                  final rRect = entry is OverlayTutorialRectEntry
+                      ? OverlayTutorialRectEntry.applyDesignToEntry(
+                          context,
+                          entryRect,
+                          entry,
+                        )
+                      : null;
                   if (hint.position == null)
                     return hint.builder(context, entryRect, rRect);
 
@@ -170,7 +178,7 @@ class _TutorialPaint extends CustomPainter {
   });
 
   @override
-  Future<void> paint(Canvas canvas, Size size) async {
+  void paint(Canvas canvas, Size size) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -192,21 +200,37 @@ class _TutorialPaint extends CustomPainter {
   Path _drawTutorialEntries(Canvas canvas, Path path) {
     overlayTutorialEntries.forEach((entry) {
       final rect = entryRects[entry.widgetKey];
-      if (rect == null) return;
+      if (rect == null) return path;
 
-      final rRectToDraw = OverlayTutorialEntry.applyPaddingToWidgetEntry(
-        context,
-        rect,
-        entry,
-      );
+      if (entry is OverlayTutorialRectEntry) {
+        final rRectToDraw = OverlayTutorialRectEntry.applyDesignToEntry(
+          context,
+          rect,
+          entry,
+        );
 
-      // Draw Overlay Tutorial Entry
+        // Draw Overlay Tutorial Rect Entry
 
-      path = Path.combine(
-        PathOperation.difference,
-        path,
-        Path()..addRRect(rRectToDraw),
-      );
+        path = Path.combine(
+          PathOperation.difference,
+          path,
+          Path()..addRRect(rRectToDraw),
+        );
+      } else if (entry is OverlayTutorialCircleEntry) {
+        // Draw Overlay Tutorial Circle Entry
+
+        path = Path.combine(
+          PathOperation.difference,
+          path,
+          Path()
+            ..addOval(OverlayTutorialCircleEntry.applyDesignToEntry(
+              rect,
+              entry,
+            )),
+        );
+      } else if (entry is OverlayTutorialCustomShapeEntry) {
+        path = entry.shapeBuilder?.call(rect, path);
+      }
     });
 
     return path;
