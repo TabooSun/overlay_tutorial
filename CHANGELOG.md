@@ -1,3 +1,7 @@
+## [0.0.4] - 27/82/2020
+
+* Handle SafeArea
+
 ## [0.0.3] - 26/82/2020
 
 * Add Description to `pubspec.yaml`

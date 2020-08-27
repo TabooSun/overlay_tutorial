@@ -14,22 +14,25 @@ class OverlayTutorial extends StatefulWidget {
   /// Used to wrap all the content containing widgets that would be used in
   /// [overlayTutorialEntries].
   ///
-  /// Do note that screen status bar is not handled when in use with [SafeArea].
-  /// Please make sure [child] contains [SafeArea] in order to let
-  /// [OverlayTutorialEntry] to work properly.
+  /// If you use [SafeArea], pass [context] to avoid incorrect behaviour.
   final Widget child;
 
   /// All the widget entries that needs hole.
   final List<OverlayTutorialEntry> overlayTutorialEntries;
 
-  /// This is used to show/hide this overlay tutorial
+  /// This is used to show/hide this overlay tutorial.
   final OverlayTutorialController controller;
 
-  /// The color of overlay
+  /// The color of overlay.
   final Color overlayColor;
 
-  /// This is rendered
+  /// This is rendered by stacking all widgets on top of the overlay entries.
   final List<Widget> overlayChildren;
+
+  /// [context] is used for calculating [SafeArea] top padding.
+  ///
+  /// Do ensure that ancestor of [context] does not have [SafeArea].
+  final BuildContext context;
 
   OverlayTutorial({
     Key key,
@@ -38,6 +41,7 @@ class OverlayTutorial extends StatefulWidget {
     OverlayTutorialController controller,
     this.overlayColor,
     this.overlayChildren = const [],
+    this.context,
   })  : controller = controller ?? OverlayTutorialController(),
         super(key: key);
 
@@ -59,13 +63,22 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
   }
 
   void _onFrameUpdated(timeStamp) {
+    final parentContext = widget.context;
+
     _entryRects.removeWhere((key, value) =>
         !widget.overlayTutorialEntries.any((x) => x.widgetKey == key));
     widget.overlayTutorialEntries.forEach((entry) {
       final renderBox =
           entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
       if (renderBox == null) return;
-      final rect = renderBox.localToGlobal(Offset.zero) & renderBox.size;
+      final topSafeArea = parentContext != null &&
+              context.findAncestorWidgetOfExactType<SafeArea>() != null
+          ? MediaQuery.of(parentContext).padding.top
+          : 0.0;
+      print(topSafeArea);
+      final rect =
+          (renderBox.localToGlobal(Offset.zero) - Offset(0, topSafeArea)) &
+              renderBox.size;
       final cachedEntryRect = _entryRects[entry.widgetKey];
       if (cachedEntryRect == rect) return;
       _entryRects.update(
