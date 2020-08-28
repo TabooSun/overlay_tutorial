@@ -1,4 +1,10 @@
-## [0.0.6] - 28/8/2020
+## [0.0.7] - 28/8/2020
+
+* Breaking API Changes: `OverlayTutorialEntry` is now an abstract class, use `OverlayTutorialRectEntry` instead.
+* Introduce `OverlayTutorialCircleEntry` & `OverlayTutorialCustomShapeEntry` for drawing other shape.
+* Change use of `addPersistentFrameCallback` to `addTimingsCallback` as the former will cause Flutter Inspector Select Widget mode to be malfunction.
+
+## [0.0.6] - 27/8/2020
 
 * Remove print statement
 
