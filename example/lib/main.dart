@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_tutorial/overlay_tutorial.dart';
 
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -31,7 +33,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final OverlayTutorialController _controller = OverlayTutorialController();
-  final addButtonKey = GlobalKey(), counterTextKey = GlobalKey();
+  final addButtonKey = GlobalKey(),
+      counterTextKey = GlobalKey(),
+      shareKey = GlobalKey();
 
   int _counter = 0;
 
@@ -41,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -49,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _controller.showOverlayTutorial();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -115,7 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Current Counter will be displayed here',
-                          style: textTheme.bodyText2.copyWith(color: tutorialColor),
+                          style: textTheme.bodyText2
+                              .copyWith(color: tutorialColor),
                         ),
                       ),
                     ),
@@ -123,6 +128,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ],
+          ),
+          OverlayTutorialCustomShapeEntry(
+            widgetKey: shareKey,
+            shapeBuilder: (rect, path) {
+              path = Path.combine(
+                PathOperation.difference,
+                path,
+                Path()
+                  ..addOval(Rect.fromLTWH(
+                    rect.left - 16,
+                    rect.top,
+                    112,
+                    64,
+                  )),
+              );
+              return path;
+            },
           ),
         ],
         overlayColor: Colors.blueAccent.withOpacity(.6),
@@ -135,6 +157,12 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Icon(
+                  Icons.share,
+                  key: shareKey,
+                  size: 64,
+                ),
+                const SizedBox(height: 64),
                 Text(
                   'You have pushed the button this many times:',
                 ),

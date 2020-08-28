@@ -8,9 +8,18 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 part 'src/overlay_tutorial_controller.dart';
-
 part 'src/overlay_tutorial_entry.dart';
 
+/// Widget for displaying an overlay on top of UI. Provide [OverlayTutorialEntry]
+/// for holes.
+///
+/// To get started, create a [GlobalKey] key for widget that you need to make
+/// entry and assign it to the widget's [Widget.key] property. Use the same
+/// key for [OverlayTutorialEntry.widgetKey].
+///
+/// Create a [OverlayTutorialController] and assign to
+/// [OverlayTutorial.controller]. You will be able to show and hide the
+/// overlay tutorial with the controller.
 class OverlayTutorial extends StatefulWidget {
   /// Used to wrap all the content containing widgets that would be used in
   /// [overlayTutorialEntries].
@@ -78,7 +87,7 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
 
       if (renderBox == null) return;
       final topSafeArea = parentContext != null &&
-              context.findAncestorWidgetOfExactType<SafeArea>() != null
+              context?.findAncestorWidgetOfExactType<SafeArea>() != null
           ? MediaQuery.of(parentContext).padding.top
           : 0.0;
 
@@ -229,10 +238,12 @@ class _TutorialPaint extends CustomPainter {
           PathOperation.difference,
           path,
           Path()
-            ..addOval(OverlayTutorialCircleEntry.applyDesignToEntry(
-              rect,
-              entry,
-            )),
+            ..addOval(
+              OverlayTutorialCircleEntry.applyDesignToEntry(
+                rect,
+                entry,
+              ),
+            ),
         );
       } else if (entry is OverlayTutorialCustomShapeEntry) {
         path = entry.shapeBuilder?.call(rect, path);
