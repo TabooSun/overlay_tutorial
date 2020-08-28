@@ -55,10 +55,12 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
   bool _showOverlay = false;
   final ValueNotifier<Map<GlobalKey, Rect>> _entryRects = ValueNotifier({});
 
+  TimingsCallback _timingsCallback;
+
   @override
   void initState() {
     super.initState();
-    _timingsCallback = (_){
+    _timingsCallback = (_) {
       _retrieveEntryRects();
     };
     widget.controller._state = this;
@@ -97,8 +99,6 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
     setState(() {});
   }
 
-  TimingsCallback _timingsCallback;
-
   void showOverlayTutorial() {
     if (!_showOverlay) {
       SchedulerBinding.instance.addTimingsCallback(_timingsCallback);
@@ -109,59 +109,63 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
   }
 
   void hideOverlayTutorial() {
-    if (_showOverlay){
+    if (_showOverlay) {
       SchedulerBinding.instance.removeTimingsCallback(_timingsCallback);
       setState(() {
         _showOverlay = false;
-      });}
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_showOverlay) return widget.child;
     return Stack(
       children: <Widget>[
         CustomPaint(
           child: widget.child,
-          foregroundPainter: _TutorialPaint(
-            context,
-            overlayTutorialEntries: widget.overlayTutorialEntries,
-            entryRects: _entryRects,
-            overlayColor: widget.overlayColor,
-          ),
+          foregroundPainter: _showOverlay
+              ? _TutorialPaint(
+                  context,
+                  overlayTutorialEntries: widget.overlayTutorialEntries,
+                  entryRects: _entryRects,
+                  overlayColor: widget.overlayColor,
+                )
+              : null,
         ),
-        ...widget.overlayTutorialEntries
-            .map((entry) {
-              return entry.overlayTutorialHints.map((hint) {
-                final entryRect = _entryRects.value[entry.widgetKey];
-                if (entryRect == null) return const SizedBox.shrink();
+        if (_showOverlay) ...[
+          ...widget.overlayTutorialEntries
+              .map((entry) {
+                return entry.overlayTutorialHints.map((hint) {
+                  final entryRect = _entryRects.value[entry.widgetKey];
+                  if (entryRect == null) return const SizedBox.shrink();
 
-                final rRect = entry is OverlayTutorialRectEntry
-                    ? OverlayTutorialRectEntry.applyDesignToEntry(
-                        context,
-                        entryRect,
-                        entry,
-                      )
-                    : null;
-                if (hint.position == null)
-                  return hint.builder(context, entryRect, rRect);
+                  final rRect = entry is OverlayTutorialRectEntry
+                      ? OverlayTutorialRectEntry.applyDesignToEntry(
+                          context,
+                          entryRect,
+                          entry,
+                        )
+                      : null;
+                  if (hint.position == null)
+                    return hint.builder(context, entryRect, rRect);
 
-                final position = hint.position(entryRect);
+                  final position = hint.position(entryRect);
 
-                return Positioned(
-                  left: position.dx,
-                  top: position.dy,
-                  child: hint.builder(
-                    context,
-                    entryRect,
-                    rRect,
-                  ),
-                );
-              }).toList();
-            })
-            .expand((x) => x)
-            .toList(),
-        ...widget.overlayChildren,
+                  return Positioned(
+                    left: position.dx,
+                    top: position.dy,
+                    child: hint.builder(
+                      context,
+                      entryRect,
+                      rRect,
+                    ),
+                  );
+                }).toList();
+              })
+              .expand((x) => x)
+              .toList(),
+          ...widget.overlayChildren,
+        ],
       ],
     );
   }
