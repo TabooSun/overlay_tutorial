@@ -1,11 +1,15 @@
 library overlay_tutorial;
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 part 'src/overlay_tutorial_controller.dart';
+
 part 'src/overlay_tutorial_entry.dart';
 
 class OverlayTutorial extends StatefulWidget {
@@ -49,33 +53,28 @@ class OverlayTutorial extends StatefulWidget {
 
 class _OverlayTutorialState extends State<OverlayTutorial> {
   bool _showOverlay = false;
-  final _entryRects = <GlobalKey, Rect>{};
+  final ValueNotifier<Map<GlobalKey, Rect>> _entryRects = ValueNotifier({});
 
   @override
   void initState() {
     super.initState();
+    _timingsCallback = (_){
+      _retrieveEntryRects();
+    };
     widget.controller._state = this;
-
-    _retrieveEntryRects();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      WidgetsBinding.instance.addPersistentFrameCallback(_onFrameUpdated);
-    });
-  }
-
-  void _onFrameUpdated(timeStamp) {
-    _retrieveEntryRects();
-    setState(() {});
   }
 
   void _retrieveEntryRects() {
     final parentContext = widget.context;
 
     final overlayTutorialEntries = widget.overlayTutorialEntries;
-    _entryRects.removeWhere(
+    final entryRects = _entryRects.value;
+    entryRects.removeWhere(
         (key, value) => !overlayTutorialEntries.any((x) => x.widgetKey == key));
     overlayTutorialEntries.forEach((entry) {
       final renderBox =
           entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
+
       if (renderBox == null) return;
       final topSafeArea = parentContext != null &&
               context.findAncestorWidgetOfExactType<SafeArea>() != null
@@ -85,80 +84,84 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
       final rect =
           (renderBox.localToGlobal(Offset.zero) - Offset(0, topSafeArea)) &
               renderBox.size;
-      final cachedEntryRect = _entryRects[entry.widgetKey];
+      final cachedEntryRect = entryRects[entry.widgetKey];
       if (cachedEntryRect == rect) return;
-      _entryRects.update(
+      entryRects.update(
         entry.widgetKey,
         (value) => rect,
         ifAbsent: () => rect,
       );
     });
+
+    _entryRects.value = Map.from(entryRects);
     setState(() {});
   }
 
+  TimingsCallback _timingsCallback;
+
   void showOverlayTutorial() {
-    if (!_showOverlay)
+    if (!_showOverlay) {
+      SchedulerBinding.instance.addTimingsCallback(_timingsCallback);
       setState(() {
         _showOverlay = true;
       });
+    }
   }
 
   void hideOverlayTutorial() {
-    if (_showOverlay)
+    if (_showOverlay){
+      SchedulerBinding.instance.removeTimingsCallback(_timingsCallback);
       setState(() {
         _showOverlay = false;
-      });
+      });}
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_showOverlay) return widget.child;
     return Stack(
       children: <Widget>[
         CustomPaint(
           child: widget.child,
-          foregroundPainter: _showOverlay
-              ? _TutorialPaint(
-                  context,
-                  overlayTutorialEntries: widget.overlayTutorialEntries,
-                  entryRects: _entryRects,
-                  overlayColor: widget.overlayColor,
-                )
-              : null,
+          foregroundPainter: _TutorialPaint(
+            context,
+            overlayTutorialEntries: widget.overlayTutorialEntries,
+            entryRects: _entryRects,
+            overlayColor: widget.overlayColor,
+          ),
         ),
-        if (_showOverlay) ...[
-          ...widget.overlayTutorialEntries
-              .map((entry) {
-                return entry.overlayTutorialHints.map((hint) {
-                  final entryRect = _entryRects[entry.widgetKey];
-                  if (entryRect == null) return const SizedBox.shrink();
+        ...widget.overlayTutorialEntries
+            .map((entry) {
+              return entry.overlayTutorialHints.map((hint) {
+                final entryRect = _entryRects.value[entry.widgetKey];
+                if (entryRect == null) return const SizedBox.shrink();
 
-                  final rRect = entry is OverlayTutorialRectEntry
-                      ? OverlayTutorialRectEntry.applyDesignToEntry(
-                          context,
-                          entryRect,
-                          entry,
-                        )
-                      : null;
-                  if (hint.position == null)
-                    return hint.builder(context, entryRect, rRect);
+                final rRect = entry is OverlayTutorialRectEntry
+                    ? OverlayTutorialRectEntry.applyDesignToEntry(
+                        context,
+                        entryRect,
+                        entry,
+                      )
+                    : null;
+                if (hint.position == null)
+                  return hint.builder(context, entryRect, rRect);
 
-                  final position = hint.position(entryRect);
+                final position = hint.position(entryRect);
 
-                  return Positioned(
-                    left: position.dx,
-                    top: position.dy,
-                    child: hint.builder(
-                      context,
-                      entryRect,
-                      rRect,
-                    ),
-                  );
-                }).toList();
-              })
-              .expand((x) => x)
-              .toList(),
-          ...widget.overlayChildren,
-        ],
+                return Positioned(
+                  left: position.dx,
+                  top: position.dy,
+                  child: hint.builder(
+                    context,
+                    entryRect,
+                    rRect,
+                  ),
+                );
+              }).toList();
+            })
+            .expand((x) => x)
+            .toList(),
+        ...widget.overlayChildren,
       ],
     );
   }
@@ -168,14 +171,14 @@ class _TutorialPaint extends CustomPainter {
   final BuildContext context;
   final List<OverlayTutorialEntry> overlayTutorialEntries;
   final Color overlayColor;
-  final Map<GlobalKey, Rect> entryRects;
+  final ValueNotifier<Map<GlobalKey, Rect>> entryRects;
 
   _TutorialPaint(
     this.context, {
     this.overlayTutorialEntries = const [],
     this.overlayColor,
     this.entryRects,
-  });
+  }) : super(repaint: entryRects);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -199,8 +202,8 @@ class _TutorialPaint extends CustomPainter {
 
   Path _drawTutorialEntries(Canvas canvas, Path path) {
     overlayTutorialEntries.forEach((entry) {
-      final rect = entryRects[entry.widgetKey];
-      if (rect == null) return path;
+      final rect = entryRects.value[entry.widgetKey];
+      if (rect == null) return;
 
       if (entry is OverlayTutorialRectEntry) {
         final rRectToDraw = OverlayTutorialRectEntry.applyDesignToEntry(
