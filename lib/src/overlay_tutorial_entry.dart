@@ -23,7 +23,7 @@ class OverlayTutorialCircleEntry extends OverlayTutorialEntry {
   OverlayTutorialCircleEntry({
     @required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
-    this.radius,
+    this.radius = 0.0,
   }) : super(
           widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
@@ -52,8 +52,8 @@ class OverlayTutorialRectEntry extends OverlayTutorialEntry {
   OverlayTutorialRectEntry({
     @required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
-    this.padding,
-    this.radius,
+    this.padding = EdgeInsets.zero,
+    this.radius = Radius.zero,
   }) : super(
           widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
@@ -102,13 +102,16 @@ typedef PositionFromEntryFactory = Offset Function(Rect rect);
 /// * [rect] is the pure [Rect] of [OverlayTutorialEntry].
 ///
 /// * [rRect] is a [RRect] which is a [Rect] of [OverlayTutorialEntry] with
-/// [OverlayTutorialEntry.padding] & [OverlayTutorialEntry.radius] applied.
+/// [OverlayTutorialRectEntry.padding] & [OverlayTutorialRectEntry.radius]
+/// applied. This is null when entry is not [OverlayTutorialRectEntry]
 typedef WidgetFromEntryBuilder = Widget Function(
   BuildContext context,
   Rect rect,
   RRect rRect,
 );
 
+/// This is used for placing custom widget aside your [OverlayTutorialEntry].
+/// The [Rect] of the entry's widget is provided.
 class OverlayTutorialWidgetHint {
   final WidgetFromEntryBuilder builder;
 
