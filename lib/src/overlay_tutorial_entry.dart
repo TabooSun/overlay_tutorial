@@ -12,6 +12,19 @@ abstract class OverlayTutorialEntry {
     @required this.widgetKey,
     this.overlayTutorialHints = const [],
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OverlayTutorialEntry &&
+          runtimeType == other.runtimeType &&
+          widgetKey == other.widgetKey &&
+          ListEquality()
+              .equals(other.overlayTutorialHints, overlayTutorialHints);
+
+  @override
+  int get hashCode =>
+      widgetKey.hashCode ^ ListEquality().hash(overlayTutorialHints);
 }
 
 /// Draw a hole as a circle on the widget.
@@ -124,4 +137,15 @@ class OverlayTutorialWidgetHint {
     this.position,
     @required this.builder,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OverlayTutorialWidgetHint &&
+          runtimeType == other.runtimeType &&
+          builder == other.builder &&
+          position == other.position;
+
+  @override
+  int get hashCode => builder.hashCode ^ position.hashCode;
 }
