@@ -2,6 +2,7 @@ library overlay_tutorial;
 
 import 'dart:ui';
 
+import 'package:collection/equality.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -103,8 +104,10 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
       );
     });
 
-    _entryRects.value = Map.from(entryRects);
-    setState(() {});
+    if (!MapEquality().equals(_entryRects.value, entryRects)) {
+      _entryRects.value = Map.from(entryRects);
+      setState(() {});
+    }
   }
 
   void showOverlayTutorial() {
@@ -254,5 +257,16 @@ class _TutorialPaint extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(_TutorialPaint oldDelegate) {
+    print(oldDelegate.overlayColor != overlayColor ||
+        oldDelegate.context != context ||
+        !ListEquality().equals(
+            oldDelegate.overlayTutorialEntries, overlayTutorialEntries) ||
+        !MapEquality().equals(oldDelegate.entryRects.value, entryRects.value));
+    return oldDelegate.overlayColor != overlayColor ||
+        oldDelegate.context != context ||
+        !ListEquality().equals(
+            oldDelegate.overlayTutorialEntries, overlayTutorialEntries) ||
+        !MapEquality().equals(oldDelegate.entryRects.value, entryRects.value);
+  }
 }

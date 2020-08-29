@@ -37,12 +37,25 @@ Future<void> main(List<String> args) async {
     if (results.arguments.isEmpty || results[helpName]) print(parser.usage);
     final type = results[typeName];
 
+    final runInShell = Platform.isWindows ? true : false;
+    String getProjectVersion() => (Process.runSync(
+          'cider',
+          ['version'],
+          stdoutEncoding: utf8,
+          runInShell: runInShell,
+        ).stdout as String)
+            .trim();
+
+    final currentVersion = getProjectVersion();
     Process.runSync(
-      'pubver',
+      'cider',
       'bump $type'.split(' '),
       stdoutEncoding: utf8,
+      runInShell: runInShell,
     );
+    final latestVersion = getProjectVersion();
 
+    print('Version updated from ${currentVersion} to ${latestVersion}');
   } on FormatException catch (ex) {
     final sb = StringBuffer();
     sb.writeln(ex.message);
