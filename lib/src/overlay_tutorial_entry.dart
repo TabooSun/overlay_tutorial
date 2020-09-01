@@ -102,7 +102,7 @@ class OverlayTutorialCustomShapeEntry extends OverlayTutorialEntry {
   OverlayTutorialCustomShapeEntry({
     @required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
-    this.shapeBuilder,
+    @required this.shapeBuilder,
   }) : super(
           widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
@@ -130,7 +130,7 @@ class OverlayTutorialWidgetHint {
 
   /// The offset from a [OverlayTutorialEntry].
   /// If and only if this is null, [child] can be positioned by wrapping with
-  /// [Positioned] or [Center].
+  /// [Positioned], [Align] or [Center].
   final PositionFromEntryFactory position;
 
   OverlayTutorialWidgetHint({

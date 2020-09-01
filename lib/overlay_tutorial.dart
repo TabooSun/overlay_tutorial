@@ -2,13 +2,14 @@ library overlay_tutorial;
 
 import 'dart:ui';
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 part 'src/overlay_tutorial_controller.dart';
+
 part 'src/overlay_tutorial_entry.dart';
 
 /// Widget for displaying an overlay on top of UI. Provide [OverlayTutorialEntry]
@@ -257,16 +258,10 @@ class _TutorialPaint extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_TutorialPaint oldDelegate) {
-    print(oldDelegate.overlayColor != overlayColor ||
-        oldDelegate.context != context ||
-        !ListEquality().equals(
-            oldDelegate.overlayTutorialEntries, overlayTutorialEntries) ||
-        !MapEquality().equals(oldDelegate.entryRects.value, entryRects.value));
-    return oldDelegate.overlayColor != overlayColor ||
-        oldDelegate.context != context ||
-        !ListEquality().equals(
-            oldDelegate.overlayTutorialEntries, overlayTutorialEntries) ||
-        !MapEquality().equals(oldDelegate.entryRects.value, entryRects.value);
-  }
+  bool shouldRepaint(_TutorialPaint oldDelegate) =>
+      oldDelegate.overlayColor != overlayColor ||
+      oldDelegate.context != context ||
+      !ListEquality()
+          .equals(oldDelegate.overlayTutorialEntries, overlayTutorialEntries) ||
+      !MapEquality().equals(oldDelegate.entryRects.value, entryRects.value);
 }

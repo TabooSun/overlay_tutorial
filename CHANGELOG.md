@@ -1,3 +1,9 @@
+## [0.1.1] - 1/9/2020
+
+- Remove print statement
+- Make `shapeBuilder` required in `OverlayTutorialCustomShapeEntry`
+- Improve documentation.
+
 ## [0.1.0] - 29/8/2020
 
 - Improve performance by preventing canvas from drawing continuously.
