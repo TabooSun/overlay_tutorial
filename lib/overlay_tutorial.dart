@@ -105,10 +105,8 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
       );
     });
 
-    if (!MapEquality().equals(_entryRects.value, entryRects)) {
-      _entryRects.value = Map.from(entryRects);
-      setState(() {});
-    }
+    _entryRects.value = Map.from(entryRects);
+    setState(() {});
   }
 
   void showOverlayTutorial() {

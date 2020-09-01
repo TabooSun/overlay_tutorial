@@ -1,3 +1,7 @@
+## [0.1.2] - 1/9/2020
+
+- Hotfix - Overlay not showing on first time
+
 ## [0.1.1] - 1/9/2020
 
 - Remove print statement
