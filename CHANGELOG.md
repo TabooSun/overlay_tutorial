@@ -16,11 +16,11 @@
 
 - Improve performance by preventing canvas from drawing continuously.
 
-* ## [0.0.8] - 28/8/2020
+## [0.0.8] - 28/8/2020
 
 * Bugfix & Improve documentation
 
-* ## [0.0.7] - 28/8/2020
+## [0.0.7] - 28/8/2020
 
 * Breaking API Changes: `OverlayTutorialEntry` is now an abstract class, use `OverlayTutorialRectEntry` instead.
 * Introduce `OverlayTutorialCircleEntry` & `OverlayTutorialCustomShapeEntry` for drawing other shape.
