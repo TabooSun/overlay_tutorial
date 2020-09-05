@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 
 part 'src/overlay_tutorial_controller.dart';
 part 'src/overlay_tutorial_entry.dart';
@@ -87,7 +86,6 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
     }
   }
 
-  @protected
   void retrieveEntryRects() {
     final parentContext = widget.context;
 
