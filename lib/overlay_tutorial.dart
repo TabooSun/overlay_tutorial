@@ -205,7 +205,7 @@ class __TutorialPaintState extends State<_TutorialPaint> {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      child: const SizedBox.expand(),
+      size: const Size.square(double.infinity),
       foregroundPainter: _TutorialPainter(
         context,
         overlayTutorialEntries: widget.overlayTutorialEntries,
