@@ -1,3 +1,7 @@
+## [0.2.0] - 5/9/2020
+
+- Fix Overlay Entry delay in production.
+
 ## [0.1.2] - 1/9/2020
 
 - Hotfix - Overlay not showing on first time
