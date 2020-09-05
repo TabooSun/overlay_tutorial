@@ -31,11 +31,15 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   final OverlayTutorialController _controller = OverlayTutorialController();
   final addButtonKey = GlobalKey(),
       counterTextKey = GlobalKey(),
       shareKey = GlobalKey();
+
+  AnimationController _animationController;
+  Animation<Offset> _tweenAnimation;
 
   int _counter = 0;
 
@@ -48,6 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _tweenAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(-1, 0),
+    ).chain(CurveTween(curve: Curves.easeInOut)).animate(_animationController
+      ..repeat(
+        reverse: true,
+      ));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.showOverlayTutorial();
     });
@@ -157,10 +173,19 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
-                  Icons.share,
-                  key: shareKey,
-                  size: 64,
+                AnimatedBuilder(
+                  animation: _tweenAnimation,
+                  builder: (context, child) {
+                    return SlideTransition(
+                      position: _tweenAnimation,
+                      child: child,
+                    );
+                  },
+                  child: Icon(
+                    Icons.share,
+                    key: shareKey,
+                    size: 64,
+                  ),
                 ),
                 const SizedBox(height: 64),
                 Text(
