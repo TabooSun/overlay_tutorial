@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 
 part 'src/overlay_tutorial_controller.dart';
 part 'src/overlay_tutorial_entry.dart';
@@ -61,7 +62,8 @@ class OverlayTutorial extends StatefulWidget {
 
 class _OverlayTutorialState extends State<OverlayTutorial> {
   bool _showOverlay = false;
-  final ValueNotifier<Map<GlobalKey, Rect>> entryRects = ValueNotifier({});
+  final ValueNotifier<Map<GlobalKey, Rect>> entryRectsListenable =
+      ValueNotifier({});
 
   @override
   void initState() {
@@ -85,22 +87,51 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
     }
   }
 
+  @protected
+  void retrieveEntryRects() {
+    final parentContext = widget.context;
+
+    final overlayTutorialEntries = widget.overlayTutorialEntries;
+    final entryRects = entryRectsListenable.value;
+    entryRects.removeWhere(
+        (key, value) => !overlayTutorialEntries.any((x) => x.widgetKey == key));
+    overlayTutorialEntries.forEach((entry) {
+      final renderBox =
+          entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
+
+      if (renderBox == null) return;
+      final topSafeArea = parentContext != null &&
+              context?.findAncestorWidgetOfExactType<SafeArea>() != null
+          ? MediaQuery.of(parentContext).padding.top
+          : 0.0;
+
+      final rect =
+          (renderBox.localToGlobal(Offset.zero) - Offset(0, topSafeArea)) &
+              renderBox.size;
+      final cachedEntryRect = entryRects[entry.widgetKey];
+      if (cachedEntryRect == rect) return;
+      entryRects.update(
+        entry.widgetKey,
+        (value) => rect,
+        ifAbsent: () => rect,
+      );
+    });
+
+    entryRectsListenable.value = Map.from(entryRects);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
         widget.child,
-        if (_showOverlay)
-          _TutorialPaint(
-            overlayTutorialEntries: widget.overlayTutorialEntries,
-            context: widget.context,
-            overlayColor: widget.overlayColor,
-          ),
         if (_showOverlay) ...[
+          _TutorialPaint(overlayTutorialState: this),
           ...widget.overlayTutorialEntries
               .map((entry) {
                 return entry.overlayTutorialHints.map((hint) {
-                  final entryRect = entryRects.value[entry.widgetKey];
+                  final entryRect = entryRectsListenable.value[entry.widgetKey];
                   if (entryRect == null) return const SizedBox.shrink();
 
                   final rRect = entry is OverlayTutorialRectEntry
@@ -136,15 +167,11 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
 }
 
 class _TutorialPaint extends StatefulWidget {
-  final BuildContext context;
-  final List<OverlayTutorialEntry> overlayTutorialEntries;
-  final Color overlayColor;
+  final _OverlayTutorialState overlayTutorialState;
 
   const _TutorialPaint({
     Key key,
-    this.context,
-    this.overlayTutorialEntries,
-    this.overlayColor,
+    this.overlayTutorialState,
   }) : super(key: key);
 
   @override
@@ -152,65 +179,28 @@ class _TutorialPaint extends StatefulWidget {
 }
 
 class __TutorialPaintState extends State<_TutorialPaint> {
-  ValueNotifier<Map<GlobalKey<State<StatefulWidget>>, Rect>> get entryRects =>
-      context.findAncestorStateOfType<_OverlayTutorialState>().entryRects;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       WidgetsBinding.instance.addPersistentFrameCallback((_) {
-        _retrieveEntryRects();
+        widget.overlayTutorialState.retrieveEntryRects();
       });
     });
   }
 
-  void _retrieveEntryRects() {
-    final parentContext = widget.context;
-
-    final overlayTutorialEntries = widget.overlayTutorialEntries;
-    final entryRects = context
-        .findAncestorStateOfType<_OverlayTutorialState>()
-        .entryRects
-        .value;
-    entryRects.removeWhere(
-        (key, value) => !overlayTutorialEntries.any((x) => x.widgetKey == key));
-    overlayTutorialEntries.forEach((entry) {
-      final renderBox =
-          entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
-
-      if (renderBox == null) return;
-      final topSafeArea = parentContext != null &&
-              context?.findAncestorWidgetOfExactType<SafeArea>() != null
-          ? MediaQuery.of(parentContext).padding.top
-          : 0.0;
-
-      final rect =
-          (renderBox.localToGlobal(Offset.zero) - Offset(0, topSafeArea)) &
-              renderBox.size;
-      final cachedEntryRect = entryRects[entry.widgetKey];
-      if (cachedEntryRect == rect) return;
-      entryRects.update(
-        entry.widgetKey,
-        (value) => rect,
-        ifAbsent: () => rect,
-      );
-    });
-
-    context.findAncestorStateOfType<_OverlayTutorialState>().entryRects.value =
-        Map.from(entryRects);
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
+    final overlayTutorialEntries =
+        widget.overlayTutorialState.widget.overlayTutorialEntries;
+    final overlayColor = widget.overlayTutorialState.widget.overlayColor;
     return CustomPaint(
       size: const Size.square(double.infinity),
       foregroundPainter: _TutorialPainter(
         context,
-        overlayTutorialEntries: widget.overlayTutorialEntries,
-        entryRects: entryRects,
-        overlayColor: widget.overlayColor,
+        overlayTutorialEntries: overlayTutorialEntries,
+        entryRects: widget.overlayTutorialState.entryRectsListenable,
+        overlayColor: overlayColor,
       ),
     );
   }
