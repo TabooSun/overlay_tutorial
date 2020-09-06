@@ -1,3 +1,7 @@
+## [0.2.1] - 7/9/2020
+
+- Allow package to be used on flutter 1.17.5
+
 ## [0.2.0] - 5/9/2020
 
 - Fix Overlay Entry delay in production.
