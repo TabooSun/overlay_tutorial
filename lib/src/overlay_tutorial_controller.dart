@@ -11,4 +11,7 @@ class OverlayTutorialController {
 
   /// This is for hiding the overlay tutorial.
   void hideOverlayTutorial() => _state?.hideOverlayTutorial();
+
+  /// This is for updating the overlay tutorial after it is shown.
+  void updateOverlayTutorial() => _state?.retrieveEntryRects();
 }
