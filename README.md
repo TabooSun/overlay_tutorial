@@ -16,6 +16,13 @@ key for [OverlayTutorialEntry.widgetKey].
 
 # Full Usage
 
+## Create a controller somewhere
+```dart
+final OverlayTutorialController _controller = OverlayTutorialController();
+```
+
+## Wrap your UI
+
 ```dart
 
 SafeArea(
@@ -144,6 +151,12 @@ SafeArea(
     ),
   ),
 );
+```
+
+## Use the controller to control if the Tutorial should be shown
+
+```dart
+_controller.showOverlayTutorial();
 ```
 
 # Hole Shape

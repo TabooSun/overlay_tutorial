@@ -1,5 +1,6 @@
 library overlay_tutorial;
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 part 'src/overlay_tutorial_controller.dart';
+
 part 'src/overlay_tutorial_entry.dart';
 
 /// Widget for displaying an overlay on top of UI. Provide [OverlayTutorialEntry]
@@ -44,6 +46,12 @@ class OverlayTutorial extends StatefulWidget {
   /// Do ensure that ancestor of [context] does not have [SafeArea].
   final BuildContext context;
 
+  /// Defines how long will it take for the next retrieving widget position &
+  /// building entry(s).
+  ///
+  /// Defaults to 200 milliseconds.
+  final Duration refreshRate;
+
   OverlayTutorial({
     Key key,
     this.child,
@@ -52,7 +60,9 @@ class OverlayTutorial extends StatefulWidget {
     this.overlayColor,
     this.overlayChildren = const [],
     this.context,
+    this.refreshRate = const Duration(milliseconds: 200),
   })  : controller = controller ?? OverlayTutorialController(),
+        assert(refreshRate != null),
         super(key: key);
 
   @override
@@ -177,14 +187,23 @@ class _TutorialPaint extends StatefulWidget {
 }
 
 class __TutorialPaintState extends State<_TutorialPaint> {
+  Timer _timer;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      _timer =
+          Timer.periodic(widget.overlayTutorialState.widget.refreshRate, (_) {
         widget.overlayTutorialState.retrieveEntryRects();
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -192,14 +211,18 @@ class __TutorialPaintState extends State<_TutorialPaint> {
     final overlayTutorialEntries =
         widget.overlayTutorialState.widget.overlayTutorialEntries;
     final overlayColor = widget.overlayTutorialState.widget.overlayColor;
+
     return CustomPaint(
       size: const Size.square(double.infinity),
-      foregroundPainter: _TutorialPainter(
-        context,
-        overlayTutorialEntries: overlayTutorialEntries,
-        entryRects: widget.overlayTutorialState.entryRectsListenable,
-        overlayColor: overlayColor,
-      ),
+      foregroundPainter:
+          widget.overlayTutorialState.entryRectsListenable.value.isEmpty
+              ? null
+              : _TutorialPainter(
+                  context,
+                  overlayTutorialEntries: overlayTutorialEntries,
+                  entryRects: widget.overlayTutorialState.entryRectsListenable,
+                  overlayColor: overlayColor,
+                ),
     );
   }
 }
