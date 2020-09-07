@@ -1,5 +1,10 @@
 part of overlay_tutorial;
 
+/// Abstract class of Entry.
+///
+/// - See [OverlayTutorialCircleEntry] for circle shape entry.
+/// - See [OverlayTutorialRectEntry] for rectangular shape entry.
+/// - See [OverlayTutorialCustomShapeEntry] for custom shape entry.
 abstract class OverlayTutorialEntry {
   /// The [GlobalKey] of the target widget that requires hole.
   final GlobalKey widgetKey;
