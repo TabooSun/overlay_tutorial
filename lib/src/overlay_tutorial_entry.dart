@@ -14,7 +14,7 @@ abstract class OverlayTutorialEntry {
   final List<OverlayTutorialWidgetHint> overlayTutorialHints;
 
   OverlayTutorialEntry({
-    @required this.widgetKey,
+    required this.widgetKey,
     this.overlayTutorialHints = const [],
   });
 
@@ -39,7 +39,7 @@ class OverlayTutorialCircleEntry extends OverlayTutorialEntry {
 
   /// See [OverlayTutorialEntry] for arguments detail.
   OverlayTutorialCircleEntry({
-    @required GlobalKey widgetKey,
+    required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
     this.radius = 0.0,
   }) : super(
@@ -68,7 +68,7 @@ class OverlayTutorialRectEntry extends OverlayTutorialEntry {
 
   /// See [OverlayTutorialEntry] for arguments detail.
   OverlayTutorialRectEntry({
-    @required GlobalKey widgetKey,
+    required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
     this.padding = EdgeInsets.zero,
     this.radius = Radius.zero,
@@ -105,9 +105,9 @@ class OverlayTutorialCustomShapeEntry extends OverlayTutorialEntry {
 
   /// See [OverlayTutorialEntry] for arguments detail.
   OverlayTutorialCustomShapeEntry({
-    @required GlobalKey widgetKey,
+    required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
-    @required this.shapeBuilder,
+    required this.shapeBuilder,
   }) : super(
           widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
@@ -125,7 +125,7 @@ typedef PositionFromEntryFactory = Offset Function(Rect rect);
 typedef WidgetFromEntryBuilder = Widget Function(
   BuildContext context,
   Rect rect,
-  RRect rRect,
+  RRect? rRect,
 );
 
 /// This is used for placing custom widget aside your [OverlayTutorialEntry].
@@ -136,11 +136,11 @@ class OverlayTutorialWidgetHint {
   /// The offset from a [OverlayTutorialEntry].
   /// If and only if this is null, [child] can be positioned by wrapping with
   /// [Positioned], [Align] or [Center].
-  final PositionFromEntryFactory position;
+  final PositionFromEntryFactory? position;
 
   OverlayTutorialWidgetHint({
     this.position,
-    @required this.builder,
+    required this.builder,
   });
 
   @override

@@ -4,7 +4,7 @@ part of overlay_tutorial;
 /// [OverlayTutorial.controller]. You will be able to show and hide the
 /// overlay tutorial with the controller.
 class OverlayTutorialController {
-  _OverlayTutorialState _state;
+  _OverlayTutorialState? _state;
 
   /// This is for showing the overlay tutorial.
   void showOverlayTutorial() => _state?.showOverlayTutorial();
