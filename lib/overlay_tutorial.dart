@@ -53,7 +53,7 @@ class OverlayTutorial extends StatefulWidget {
   final Duration refreshRate;
 
   OverlayTutorial({
-    required Key key,
+    Key? key,
     required this.child,
     this.overlayTutorialEntries = const [],
     OverlayTutorialController? controller,
@@ -62,7 +62,6 @@ class OverlayTutorial extends StatefulWidget {
     this.context,
     this.refreshRate = const Duration(milliseconds: 200),
   })  : controller = controller ?? OverlayTutorialController(),
-        assert(refreshRate != null),
         super(key: key);
 
   @override
@@ -108,7 +107,7 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
           entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
 
       final topSafeArea = parentContext != null &&
-              context?.findAncestorWidgetOfExactType<SafeArea>() != null
+              context.findAncestorWidgetOfExactType<SafeArea>() != null
           ? MediaQuery.of(parentContext).padding.top
           : 0.0;
 
@@ -177,7 +176,7 @@ class _TutorialPaint extends StatefulWidget {
   final _OverlayTutorialState? overlayTutorialState;
 
   const _TutorialPaint({
-    required Key key,
+    Key? key,
     this.overlayTutorialState,
   }) : super(key: key);
 
@@ -191,7 +190,7 @@ class __TutorialPaintState extends State<_TutorialPaint> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _timer =
           Timer.periodic(widget.overlayTutorialState!.widget.refreshRate, (_) {
         widget.overlayTutorialState!.retrieveEntryRects();
@@ -293,7 +292,7 @@ class _TutorialPainter extends CustomPainter {
             ),
         );
       } else if (entry is OverlayTutorialCustomShapeEntry) {
-        path = entry.shapeBuilder?.call(rect, path);
+        path = entry.shapeBuilder.call(rect, path);
       }
     });
 
