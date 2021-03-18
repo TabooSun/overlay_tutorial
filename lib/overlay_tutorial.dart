@@ -36,7 +36,7 @@ class OverlayTutorial extends StatefulWidget {
   final OverlayTutorialController controller;
 
   /// The color of overlay.
-  final Color overlayColor;
+  final Color? overlayColor;
 
   /// This is rendered by stacking all widgets on top of the overlay entries.
   final List<Widget> overlayChildren;
@@ -44,7 +44,7 @@ class OverlayTutorial extends StatefulWidget {
   /// [context] is used for calculating [SafeArea] top padding.
   ///
   /// Do ensure that ancestor of [context] does not have [SafeArea].
-  final BuildContext context;
+  final BuildContext? context;
 
   /// Defines how long will it take for the next retrieving widget position &
   /// building entry(s).
@@ -53,16 +53,15 @@ class OverlayTutorial extends StatefulWidget {
   final Duration refreshRate;
 
   OverlayTutorial({
-    Key key,
-    this.child,
+    Key? key,
+    required this.child,
     this.overlayTutorialEntries = const [],
-    OverlayTutorialController controller,
+    OverlayTutorialController? controller,
     this.overlayColor,
     this.overlayChildren = const [],
     this.context,
     this.refreshRate = const Duration(milliseconds: 200),
   })  : controller = controller ?? OverlayTutorialController(),
-        assert(refreshRate != null),
         super(key: key);
 
   @override
@@ -107,9 +106,8 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
       final renderBox =
           entry.widgetKey.currentContext?.findRenderObject() as RenderBox;
 
-      if (renderBox == null) return;
       final topSafeArea = parentContext != null &&
-              context?.findAncestorWidgetOfExactType<SafeArea>() != null
+              context.findAncestorWidgetOfExactType<SafeArea>() != null
           ? MediaQuery.of(parentContext).padding.top
           : 0.0;
 
@@ -152,7 +150,7 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
                   if (hint.position == null)
                     return hint.builder(context, entryRect, rRect);
 
-                  final position = hint.position(entryRect);
+                  final position = hint.position!(entryRect);
 
                   return Positioned(
                     left: position.dx,
@@ -175,10 +173,10 @@ class _OverlayTutorialState extends State<OverlayTutorial> {
 }
 
 class _TutorialPaint extends StatefulWidget {
-  final _OverlayTutorialState overlayTutorialState;
+  final _OverlayTutorialState? overlayTutorialState;
 
   const _TutorialPaint({
-    Key key,
+    Key? key,
     this.overlayTutorialState,
   }) : super(key: key);
 
@@ -187,15 +185,15 @@ class _TutorialPaint extends StatefulWidget {
 }
 
 class __TutorialPaintState extends State<_TutorialPaint> {
-  Timer _timer;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _timer =
-          Timer.periodic(widget.overlayTutorialState.widget.refreshRate, (_) {
-        widget.overlayTutorialState.retrieveEntryRects();
+          Timer.periodic(widget.overlayTutorialState!.widget.refreshRate, (_) {
+        widget.overlayTutorialState!.retrieveEntryRects();
       });
     });
   }
@@ -209,18 +207,18 @@ class __TutorialPaintState extends State<_TutorialPaint> {
   @override
   Widget build(BuildContext context) {
     final overlayTutorialEntries =
-        widget.overlayTutorialState.widget.overlayTutorialEntries;
-    final overlayColor = widget.overlayTutorialState.widget.overlayColor;
+        widget.overlayTutorialState!.widget.overlayTutorialEntries;
+    final overlayColor = widget.overlayTutorialState!.widget.overlayColor;
 
     return CustomPaint(
       size: const Size.square(double.infinity),
       foregroundPainter:
-          widget.overlayTutorialState.entryRectsListenable.value.isEmpty
+          widget.overlayTutorialState!.entryRectsListenable.value.isEmpty
               ? null
               : _TutorialPainter(
                   context,
                   overlayTutorialEntries: overlayTutorialEntries,
-                  entryRects: widget.overlayTutorialState.entryRectsListenable,
+                  entryRects: widget.overlayTutorialState!.entryRectsListenable,
                   overlayColor: overlayColor,
                 ),
     );
@@ -230,8 +228,8 @@ class __TutorialPaintState extends State<_TutorialPaint> {
 class _TutorialPainter extends CustomPainter {
   final BuildContext context;
   final List<OverlayTutorialEntry> overlayTutorialEntries;
-  final Color overlayColor;
-  final ValueNotifier<Map<GlobalKey, Rect>> entryRects;
+  final Color? overlayColor;
+  final ValueNotifier<Map<GlobalKey, Rect>>? entryRects;
 
   _TutorialPainter(
     this.context, {
@@ -262,7 +260,7 @@ class _TutorialPainter extends CustomPainter {
 
   Path _drawTutorialEntries(Canvas canvas, Path path) {
     overlayTutorialEntries.forEach((entry) {
-      final rect = entryRects.value[entry.widgetKey];
+      final rect = entryRects!.value[entry.widgetKey];
       if (rect == null) return;
 
       if (entry is OverlayTutorialRectEntry) {
@@ -294,7 +292,7 @@ class _TutorialPainter extends CustomPainter {
             ),
         );
       } else if (entry is OverlayTutorialCustomShapeEntry) {
-        path = entry.shapeBuilder?.call(rect, path);
+        path = entry.shapeBuilder.call(rect, path);
       }
     });
 
@@ -307,5 +305,5 @@ class _TutorialPainter extends CustomPainter {
       oldDelegate.context != context ||
       !ListEquality()
           .equals(oldDelegate.overlayTutorialEntries, overlayTutorialEntries) ||
-      !MapEquality().equals(oldDelegate.entryRects.value, entryRects.value);
+      !MapEquality().equals(oldDelegate.entryRects!.value, entryRects!.value);
 }

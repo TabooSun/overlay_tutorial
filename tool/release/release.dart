@@ -55,7 +55,7 @@ Future<void> main(List<String> args) async {
     );
     final latestVersion = getProjectVersion();
 
-    print('Version updated from ${currentVersion} to ${latestVersion}');
+    print('Version updated from $currentVersion to $latestVersion');
   } on FormatException catch (ex) {
     final sb = StringBuffer();
     sb.writeln(ex.message);
