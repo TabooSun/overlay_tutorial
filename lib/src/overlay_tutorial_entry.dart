@@ -6,15 +6,11 @@ part of overlay_tutorial;
 /// - See [OverlayTutorialRectEntry] for rectangular shape entry.
 /// - See [OverlayTutorialCustomShapeEntry] for custom shape entry.
 abstract class OverlayTutorialEntry {
-  /// The [GlobalKey] of the target widget that requires hole.
-  final GlobalKey widgetKey;
-
   /// Optional hint that can be placed beside the hole as the position of the
   /// target widget is provided. See [PositionFromEntryFactory] for detail.
   final List<OverlayTutorialWidgetHint> overlayTutorialHints;
 
   OverlayTutorialEntry({
-    required this.widgetKey,
     this.overlayTutorialHints = const [],
   });
 
@@ -23,13 +19,11 @@ abstract class OverlayTutorialEntry {
       identical(this, other) ||
       other is OverlayTutorialEntry &&
           runtimeType == other.runtimeType &&
-          widgetKey == other.widgetKey &&
           ListEquality()
               .equals(other.overlayTutorialHints, overlayTutorialHints);
 
   @override
-  int get hashCode =>
-      widgetKey.hashCode ^ ListEquality().hash(overlayTutorialHints);
+  int get hashCode => ListEquality().hash(overlayTutorialHints);
 }
 
 /// Draw a hole as a circle on the widget.
@@ -39,11 +33,9 @@ class OverlayTutorialCircleEntry extends OverlayTutorialEntry {
 
   /// See [OverlayTutorialEntry] for arguments detail.
   OverlayTutorialCircleEntry({
-    required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
     this.radius = 0.0,
   }) : super(
-          widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
         );
 
@@ -68,12 +60,10 @@ class OverlayTutorialRectEntry extends OverlayTutorialEntry {
 
   /// See [OverlayTutorialEntry] for arguments detail.
   OverlayTutorialRectEntry({
-    required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
     this.padding = EdgeInsets.zero,
     this.radius = Radius.zero,
   }) : super(
-          widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
         );
 
@@ -105,11 +95,9 @@ class OverlayTutorialCustomShapeEntry extends OverlayTutorialEntry {
 
   /// See [OverlayTutorialEntry] for arguments detail.
   OverlayTutorialCustomShapeEntry({
-    required GlobalKey widgetKey,
     List<OverlayTutorialWidgetHint> overlayTutorialHints = const [],
     required this.shapeBuilder,
   }) : super(
-          widgetKey: widgetKey,
           overlayTutorialHints: overlayTutorialHints,
         );
 }
