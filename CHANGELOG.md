@@ -1,3 +1,13 @@
+## [2.0.0] - 22/3/2021
+
+- Complete [enhancement#10](https://github.com/TabooSun/overlay_tutorial/issues/10).
+    ### Breaking API Changes
+    1. ~~`OverlayTutorial`~~ is removed. Use `OverlayTutorialScope` instead.
+    2. `OverlayTutorialScope` does not take all the `OverlayTutorialEntry`, pass these in new widget, `OverlayTutorialHole`.
+    3. `OverlayTutorialHole` handles the `OverlayTutorialEntry`. Wrap `OverlayTutorialHole` with your widget that intends to make hole. Thus, you no longer need to provide any `GlobalKey`. 
+    4. `OverlayTutorialEntry` no longer takes `widgetKey` as argument. 
+    5. ~~`OverlayTutorialController`~~ is removed. Use the property in `OverlayTutorialScope` & `OverlayTutorialHole` to control the visibility of the overlay tutorial.
+
 ## [1.0.0] - 10/3/2021
 
 - Support dart null-safety.
