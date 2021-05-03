@@ -271,6 +271,18 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     _calculateEntryRects();
 
     overlayTutorialHoles.entries.forEach((entry) {
+      // Temporary add empty rect to path to overcome
+      // the issue: https://github.com/TabooSun/overlay_tutorial/issues/15.
+      // Kindly remove if there is any better solution or Flutter fixes it.
+
+      if (kIsWeb) {
+        path = Path.combine(
+          PathOperation.difference,
+          path,
+          Path()..addRect(Rect.zero),
+        );
+      }
+
       final overlayTutorialHoleContext = entry.value;
       final rect = _entryRects[overlayTutorialHoleContext];
       if (rect == null) return;
