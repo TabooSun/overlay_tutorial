@@ -271,6 +271,14 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     _calculateEntryRects();
 
     overlayTutorialHoles.entries.forEach((entry) {
+      if (kIsWeb) {
+        path = Path.combine(
+          PathOperation.difference,
+          path,
+          Path()..addRect(Rect.zero),
+        );
+      }
+
       final overlayTutorialHoleContext = entry.value;
       final rect = _entryRects[overlayTutorialHoleContext];
       if (rect == null) return;
