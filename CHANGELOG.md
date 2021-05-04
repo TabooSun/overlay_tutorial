@@ -1,3 +1,8 @@
+## [2.0.1] - 4/5/2021
+
+- Patch [#15](https://github.com/TabooSun/overlay_tutorial/issues/15).
+    - Fix overlay is not rendering properly in web.
+
 ## [2.0.0] - 22/3/2021
 
 - Complete [enhancement#10](https://github.com/TabooSun/overlay_tutorial/issues/10).

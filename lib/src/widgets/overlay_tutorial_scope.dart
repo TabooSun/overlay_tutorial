@@ -105,9 +105,6 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   /// See [OverlayTutorialScope.overlayColor] for detail.
   final Color? overlayColor;
 
-  /// See [OverlayTutorialScope.context] for detail.
-  final BuildContext? context;
-
   /// See [OverlayTutorialScope.enabled] for detail.
   final bool enabled;
 
@@ -122,7 +119,6 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   _OverlayTutorialBackbone({
     Key? key,
     this.overlayColor,
-    this.context,
     this.enabled = true,
     required this.overlayTutorialHoles,
     required Widget child,
@@ -271,9 +267,9 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     _calculateEntryRects();
 
     overlayTutorialHoles.entries.forEach((entry) {
-      // Temporary add empty rect to path to overcome
+      // HACK: Add empty rect to path to overcome
       // the issue: https://github.com/TabooSun/overlay_tutorial/issues/15.
-      // Kindly remove if there is any better solution or Flutter fixes it.
+      // Remove it when there is any better solution or Flutter fixes it.
 
       if (kIsWeb) {
         path = Path.combine(

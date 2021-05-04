@@ -1,10 +1,13 @@
 part of overlay_tutorial;
 
+/// Crop a hole on [child] by configuration in [overlayTutorialEntry].
 class OverlayTutorialHole extends StatefulWidget {
   /// Define the shape and hint information of this hole.
   final OverlayTutorialEntry overlayTutorialEntry;
 
-  /// See [OverlayTutorial.enabled].
+  /// Whether to enable this hole to be cropped.
+  ///
+  /// See also [OverlayTutorialScope.enabled].
   final bool enabled;
 
   final Widget child;
