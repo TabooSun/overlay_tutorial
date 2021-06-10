@@ -20,12 +20,15 @@ class OverlayTutorialScope extends StatefulWidget {
   /// Note: Direct descendant is unnecessary.
   final Widget child;
 
+  final bool ignorePointer;
+
   const OverlayTutorialScope({
     Key? key,
     this.overlayColor,
     this.enabled = false,
     required this.child,
     this.overlayChildren = const [],
+    this.ignorePointer = true,
   }) : super(key: key);
 
   @override
@@ -47,17 +50,21 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        _OverlayTutorialBackbone(
-          overlayColor: widget.overlayColor,
-          enabled: widget.enabled,
-          overlayTutorialHoles: _overlayTutorialHoles,
-          onEntryRectCalculated: (entryRects) {
-            _entryRects = entryRects;
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
-              updateChildren();
-            });
-          },
-          child: widget.child,
+        IgnorePointer(
+          ignoring: widget.enabled && widget.ignorePointer,
+          ignoringSemantics: widget.enabled && widget.ignorePointer,
+          child: _OverlayTutorialBackbone(
+            overlayColor: widget.overlayColor,
+            enabled: widget.enabled,
+            overlayTutorialHoles: _overlayTutorialHoles,
+            onEntryRectCalculated: (entryRects) {
+              _entryRects = entryRects;
+              WidgetsBinding.instance!.addPostFrameCallback((_) {
+                updateChildren();
+              });
+            },
+            child: widget.child,
+          ),
         ),
         if (widget.enabled) ...[
           ..._overlayTutorialHoles.entries
@@ -90,7 +97,7 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
                       ),
                     );
                   } else {
-                    return const SizedBox.shrink();
+                    return SizedBox.shrink();
                   }
                 }).toList(growable: false);
               })
