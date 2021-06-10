@@ -24,18 +24,53 @@ class OverlayTutorialHole extends StatefulWidget {
 }
 
 class _OverlayTutorialHoleState extends State<OverlayTutorialHole> {
+  late _OverlayTutorialScopeState? _overlayTutorialScopeState;
+
   @override
   void didChangeDependencies() {
-    final overlayTutorialScope =
+    _overlayTutorialScopeState =
         context.findAncestorStateOfType<_OverlayTutorialScopeState>();
-    if (overlayTutorialScope != null) {
-      if (widget.enabled)
-        overlayTutorialScope._overlayTutorialHoles[widget] = context;
-      else
-        overlayTutorialScope._overlayTutorialHoles.remove(widget);
-    }
 
+    final overlayTutorialScope = _overlayTutorialScopeState;
+    if (overlayTutorialScope != null) {
+      if (widget.enabled) {
+        overlayTutorialScope._overlayTutorialHoles[widget] = context;
+      } else {
+        overlayTutorialScope._overlayTutorialHoles.remove(widget);
+      }
+    }
     super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(OverlayTutorialHole oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.enabled != widget.enabled) {
+      final overlayTutorialScope = _overlayTutorialScopeState;
+      if (overlayTutorialScope != null) {
+        if (widget.enabled) {
+          overlayTutorialScope._overlayTutorialHoles[widget] = context;
+        } else {
+          overlayTutorialScope._overlayTutorialHoles.remove(oldWidget);
+        }
+
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          overlayTutorialScope.updateChildren();
+        });
+      }
+    }
+  }
+
+  @override
+  void deactivate() {
+    final overlayTutorialScope = _overlayTutorialScopeState;
+    if (overlayTutorialScope != null) {
+      overlayTutorialScope._overlayTutorialHoles.remove(widget);
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        overlayTutorialScope.updateChildren();
+      });
+    }
+    super.deactivate();
   }
 
   @override

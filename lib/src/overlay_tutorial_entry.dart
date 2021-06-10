@@ -113,7 +113,7 @@ typedef PositionFromEntryFactory = Offset Function(Rect rect);
 typedef WidgetFromEntryBuilder = Widget Function(
   BuildContext context,
   Rect rect,
-  RRect? rRect,
+  RRect rRect,
 );
 
 /// This is used for placing custom widget aside your [OverlayTutorialEntry].
