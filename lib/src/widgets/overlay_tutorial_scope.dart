@@ -69,27 +69,29 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
                   if (entryRect == null) return const SizedBox.shrink();
 
                   final overlayTutorialEntry = entry.key.overlayTutorialEntry;
-                  final rRect = overlayTutorialEntry is OverlayTutorialRectEntry
-                      ? OverlayTutorialRectEntry.applyDesignToEntry(
-                          context,
-                          entryRect,
-                          overlayTutorialEntry,
-                        )
-                      : null;
-                  if (hint.position == null)
-                    return hint.builder(context, entryRect, rRect);
-
-                  final position = hint.position!(entryRect);
-
-                  return Positioned(
-                    left: position.dx,
-                    top: position.dy,
-                    child: hint.builder(
+                  if (overlayTutorialEntry is OverlayTutorialRectEntry) {
+                    final rRect = OverlayTutorialRectEntry.applyDesignToEntry(
                       context,
                       entryRect,
-                      rRect,
-                    ),
-                  );
+                      overlayTutorialEntry,
+                    );
+                    if (hint.position == null)
+                      return hint.builder(context, entryRect, rRect);
+
+                    final position = hint.position!(entryRect);
+
+                    return Positioned(
+                      left: position.dx,
+                      top: position.dy,
+                      child: hint.builder(
+                        context,
+                        entryRect,
+                        rRect,
+                      ),
+                    );
+                  } else {
+                    return SizedBox(width: 0, height: 0);
+                  }
                 }).toList(growable: false);
               })
               .expand((x) => x)

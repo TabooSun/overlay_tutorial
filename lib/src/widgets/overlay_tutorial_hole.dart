@@ -24,18 +24,56 @@ class OverlayTutorialHole extends StatefulWidget {
 }
 
 class _OverlayTutorialHoleState extends State<OverlayTutorialHole> {
+  late _OverlayTutorialScopeState? _overlayTutorialScopeState;
+
   @override
   void didChangeDependencies() {
-    final overlayTutorialScope =
+    _overlayTutorialScopeState =
         context.findAncestorStateOfType<_OverlayTutorialScopeState>();
-    if (overlayTutorialScope != null) {
-      if (widget.enabled)
-        overlayTutorialScope._overlayTutorialHoles[widget] = context;
-      else
-        overlayTutorialScope._overlayTutorialHoles.remove(widget);
-    }
 
+    final overlayTutorialScope = _overlayTutorialScopeState;
+    if (overlayTutorialScope != null) {
+      if (widget.enabled) {
+        overlayTutorialScope._overlayTutorialHoles[widget] = context;
+      } else {
+        overlayTutorialScope._overlayTutorialHoles.remove(widget);
+      }
+    }
     super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(OverlayTutorialHole oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldState = oldWidget.enabled;
+    final currentState = widget.enabled;
+    if (oldState != currentState) {
+      final overlayTutorialScope = _overlayTutorialScopeState;
+      if (overlayTutorialScope != null) {
+        if (currentState) {
+          overlayTutorialScope._overlayTutorialHoles[widget] = context;
+        } else {
+          //overlayTutorialScope._overlayTutorialHoles.remove(widget);
+          overlayTutorialScope._overlayTutorialHoles.remove(oldWidget);
+        }
+
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          overlayTutorialScope.updateChildren();
+        });
+      }
+    }
+  }
+
+  @override
+  void deactivate() {
+    final overlayTutorialScope = _overlayTutorialScopeState;
+    if (overlayTutorialScope != null) {
+      overlayTutorialScope._overlayTutorialHoles.remove(widget);
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        overlayTutorialScope.updateChildren();
+      });
+    }
+    super.deactivate();
   }
 
   @override
