@@ -1,3 +1,8 @@
+## [2.0.2] - 10/6/2021
+
+- Patch [#20](https://github.com/TabooSun/overlay_tutorial/issues/20). (Thanks @Guang1234567)
+  - Fix `OverlayTutorialHole.enabled` does not work.
+
 ## [2.0.1] - 4/5/2021
 
 - Patch [#15](https://github.com/TabooSun/overlay_tutorial/issues/15).
