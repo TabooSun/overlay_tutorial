@@ -45,15 +45,12 @@ class _OverlayTutorialHoleState extends State<OverlayTutorialHole> {
   @override
   void didUpdateWidget(OverlayTutorialHole oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final oldState = oldWidget.enabled;
-    final currentState = widget.enabled;
-    if (oldState != currentState) {
+    if (oldWidget.enabled != widget.enabled) {
       final overlayTutorialScope = _overlayTutorialScopeState;
       if (overlayTutorialScope != null) {
-        if (currentState) {
+        if (widget.enabled) {
           overlayTutorialScope._overlayTutorialHoles[widget] = context;
         } else {
-          //overlayTutorialScope._overlayTutorialHoles.remove(widget);
           overlayTutorialScope._overlayTutorialHoles.remove(oldWidget);
         }
 

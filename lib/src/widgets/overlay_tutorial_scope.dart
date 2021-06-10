@@ -90,7 +90,7 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
                       ),
                     );
                   } else {
-                    return SizedBox(width: 0, height: 0);
+                    return const SizedBox.shrink();
                   }
                 }).toList(growable: false);
               })
