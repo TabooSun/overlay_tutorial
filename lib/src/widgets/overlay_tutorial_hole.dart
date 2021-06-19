@@ -62,18 +62,6 @@ class _OverlayTutorialHoleState extends State<OverlayTutorialHole> {
   }
 
   @override
-  void deactivate() {
-    final overlayTutorialScope = _overlayTutorialScopeState;
-    if (overlayTutorialScope != null) {
-      overlayTutorialScope._overlayTutorialHoles.remove(widget);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        overlayTutorialScope.updateChildren();
-      });
-    }
-    super.deactivate();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return widget.child;
   }
