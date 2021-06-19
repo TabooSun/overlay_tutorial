@@ -1,3 +1,13 @@
+## [2.0.4] - 19/6/2021
+
+- Update CHANGELOG.md.
+
+## [2.0.3] - 19/6/2021
+
+- Patch [#23](https://github.com/TabooSun/overlay_tutorial/issues/23).
+  - Fix widget rebuild too frequently
+  - Fix FlutterError due to using setState when widget has already disposed
+
 ## [2.0.2] - 10/6/2021
 
 - Patch [#20](https://github.com/TabooSun/overlay_tutorial/issues/20). (Thanks @Guang1234567)
