@@ -34,13 +34,28 @@ class OverlayTutorialScope extends StatefulWidget {
 
 class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   /// Store all the dependants' [Rect] information.
-  final HashMap<OverlayTutorialHole, BuildContext> _overlayTutorialHoles =
-      HashMap();
+  final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+  _overlayTutorialHoles = HashMap();
 
-  HashMap<BuildContext, Rect> _entryRects = HashMap();
+  void _updateChildren() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      setState(() {});
 
-  void updateChildren() {
-    setState(() {});
+      if (_checkIsParentRectUpdated()) {
+        _updateChildren();
+      }
+    });
+  }
+
+  bool _checkIsParentRectUpdated() {
+    return _overlayTutorialHoles.entries.any((element) {
+      final rect = element.value.computeRect();
+      if (rect != element.value.rect) {
+        return true;
+      }
+      return false;
+    });
   }
 
   @override
@@ -51,49 +66,45 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
           overlayColor: widget.overlayColor,
           enabled: widget.enabled,
           overlayTutorialHoles: _overlayTutorialHoles,
-          onEntryRectCalculated: (entryRects) {
-            _entryRects = entryRects;
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
-              updateChildren();
-            });
+          onEntryRectCalculated: () {
+            _updateChildren();
           },
           child: widget.child,
         ),
         if (widget.enabled) ...[
           ..._overlayTutorialHoles.entries
               .map((entry) {
-                return entry.key.overlayTutorialEntry.overlayTutorialHints
-                    .map((hint) {
-                  final overlayTutorialHoleContext = entry.value;
-                  final entryRect = _entryRects[overlayTutorialHoleContext];
-                  if (entryRect == null) return const SizedBox.shrink();
+            return entry.key.overlayTutorialEntry.overlayTutorialHints
+                .map((hint) {
+              final entryRect = entry.value.rect;
+              if (entryRect == null) return const SizedBox.shrink();
 
-                  final overlayTutorialEntry = entry.key.overlayTutorialEntry;
-                  if (overlayTutorialEntry is OverlayTutorialRectEntry) {
-                    final rRect = OverlayTutorialRectEntry.applyDesignToEntry(
-                      context,
-                      entryRect,
-                      overlayTutorialEntry,
-                    );
-                    if (hint.position == null)
-                      return hint.builder(context, entryRect, rRect);
+              final overlayTutorialEntry = entry.key.overlayTutorialEntry;
+              if (overlayTutorialEntry is OverlayTutorialRectEntry) {
+                final rRect = OverlayTutorialRectEntry.applyDesignToEntry(
+                  context,
+                  entryRect,
+                  overlayTutorialEntry,
+                );
+                if (hint.position == null)
+                  return hint.builder(context, entryRect, rRect);
 
-                    final position = hint.position!(entryRect);
+                final position = hint.position!(entryRect);
 
-                    return Positioned(
-                      left: position.dx,
-                      top: position.dy,
-                      child: hint.builder(
-                        context,
-                        entryRect,
-                        rRect,
-                      ),
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                }).toList(growable: false);
-              })
+                return Positioned(
+                  left: position.dx,
+                  top: position.dy,
+                  child: hint.builder(
+                    context,
+                    entryRect,
+                    rRect,
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }).toList(growable: false);
+          })
               .expand((x) => x)
               .toList(),
           ...widget.overlayChildren,
@@ -111,7 +122,8 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   final bool enabled;
 
   /// See [_OverlayTutorialScopeState._overlayTutorialHoles] for detail.
-  final HashMap<OverlayTutorialHole, BuildContext> overlayTutorialHoles;
+  final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+  overlayTutorialHoles;
 
   /// This is called each time the entry position and size is being calculated.
   ///
@@ -126,9 +138,9 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
     required Widget child,
     required this.onEntryRectCalculated,
   }) : super(
-          key: key,
-          child: child,
-        );
+    key: key,
+    child: child,
+  );
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -142,10 +154,8 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-    BuildContext context,
-    covariant _RenderOverlayTutorialBackbone renderObject,
-  ) {
+  void updateRenderObject(BuildContext context,
+      covariant _RenderOverlayTutorialBackbone renderObject,) {
     renderObject
       ..context = context
       ..overlayColor = overlayColor
@@ -156,9 +166,6 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
 }
 
 class _RenderOverlayTutorialBackbone extends RenderProxyBox {
-  /// Store all the dependants' [Rect] information.
-  final HashMap<BuildContext, Rect> _entryRects = HashMap();
-
   @override
   bool get sizedByParent => false;
 
@@ -192,13 +199,14 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     markNeedsPaint();
   }
 
-  HashMap<OverlayTutorialHole, BuildContext> _overlayTutorialHoles;
+  HashMap<OverlayTutorialHole, OverlayTutorialScopeModel> _overlayTutorialHoles;
 
   /// See [_OverlayTutorialBackbone.overlayTutorialHoles] for detail.
-  HashMap<OverlayTutorialHole, BuildContext> get overlayTutorialHoles =>
-      _overlayTutorialHoles;
+  HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+  get overlayTutorialHoles => _overlayTutorialHoles;
 
-  set overlayTutorialHoles(HashMap<OverlayTutorialHole, BuildContext> value) {
+  set overlayTutorialHoles(
+      HashMap<OverlayTutorialHole, OverlayTutorialScopeModel> value) {
     if (!MapEquality().equals(_overlayTutorialHoles, value)) {
       _overlayTutorialHoles = value;
       markNeedsPaint();
@@ -219,12 +227,14 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
   _RenderOverlayTutorialBackbone({
     Color? overlayColor,
-    required HashMap<OverlayTutorialHole, BuildContext> overlayTutorialHoles,
+    required HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+    overlayTutorialHoles,
     required BuildContext context,
     required bool enabled,
     required EntryRectCalculationFactory onEntryRectCalculated,
     RenderBox? child,
-  })  : _overlayColor = overlayColor,
+  })
+      : _overlayColor = overlayColor,
         _context = context,
         _enabled = enabled,
         _overlayTutorialHoles = overlayTutorialHoles,
@@ -247,21 +257,27 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
     if (!enabled) return;
 
-    final size = MediaQuery.of(this.context).size;
+    final size = MediaQuery
+        .of(this.context)
+        .size;
     final screenWidth = size.width;
     final screenHeight = size.height;
 
-    var path = Path()..addRect(Rect.fromLTWH(0, 0, screenWidth, screenHeight));
+    var path = Path()
+      ..addRect(Rect.fromLTWH(0, 0, screenWidth, screenHeight));
     path = _drawTutorialEntries(this.context, path);
 
-    final isDarkTheme = Theme.of(this.context).brightness == Brightness.dark;
+    final isDarkTheme = Theme
+        .of(this.context)
+        .brightness == Brightness.dark;
     final overlayColor = this.overlayColor ??
         (isDarkTheme
             ? Colors.white.withOpacity(0.8)
             : Colors.black.withOpacity(0.6));
     context.canvas.drawPath(
       path,
-      Paint()..color = overlayColor,
+      Paint()
+        ..color = overlayColor,
     );
   }
 
@@ -277,12 +293,12 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
         path = Path.combine(
           PathOperation.difference,
           path,
-          Path()..addRect(Rect.zero),
+          Path()
+            ..addRect(Rect.zero),
         );
       }
 
-      final overlayTutorialHoleContext = entry.value;
-      final rect = _entryRects[overlayTutorialHoleContext];
+      final rect = entry.value.rect;
       if (rect == null) return;
 
       final overlayTutorialEntry = entry.key.overlayTutorialEntry;
@@ -299,7 +315,8 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
         path = Path.combine(
           PathOperation.difference,
           path,
-          Path()..addRRect(rRectToDraw),
+          Path()
+            ..addRRect(rRectToDraw),
         );
       } else if (overlayTutorialEntry is OverlayTutorialCircleEntry) {
         // Draw Overlay Tutorial Circle Entry
@@ -328,21 +345,9 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
   }
 
   void _calculateEntryRects() {
-    _entryRects.clear();
-    _entryRects
-        .addAll(Map.fromEntries(overlayTutorialHoles.entries.map((entry) {
-      final renderBox = entry.value.findRenderObject() as RenderBox?;
-
-      if (renderBox == null) {
-        return MapEntry(entry.value, Rect.zero);
-      }
-
-      return MapEntry(
-        entry.value,
-        (renderBox.localToGlobal(Offset.zero)) & renderBox.size,
-      );
-    })));
-
-    onEntryRectCalculated.call(_entryRects);
+    overlayTutorialHoles.entries.forEach((entry) {
+      entry.value.rect = entry.value.computeRect();
+    });
+    onEntryRectCalculated.call();
   }
 }
