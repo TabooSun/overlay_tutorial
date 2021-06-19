@@ -1,7 +1,7 @@
 part of overlay_tutorial;
 
 /// Crop a hole on [child] by configuration in [overlayTutorialEntry].
-class OverlayTutorialHole extends StatefulWidget {
+class OverlayTutorialHole extends SingleChildRenderObjectWidget {
   /// Define the shape and hint information of this hole.
   final OverlayTutorialEntry overlayTutorialEntry;
 
@@ -10,71 +10,125 @@ class OverlayTutorialHole extends StatefulWidget {
   /// See also [OverlayTutorialScope.enabled].
   final bool enabled;
 
-  final Widget child;
-
   OverlayTutorialHole({
     Key? key,
     required this.overlayTutorialEntry,
     required this.enabled,
-    required this.child,
-  }) : super(key: key);
+    required Widget child,
+  }) : super(
+          key: key,
+          child: child,
+        );
 
   @override
-  _OverlayTutorialHoleState createState() => _OverlayTutorialHoleState();
+  RenderObject createRenderObject(BuildContext context) {
+    return _RenderOverlayTutorialHole(
+      overlayTutorialHole: this,
+      context: context,
+      overlayTutorialEntry: overlayTutorialEntry,
+      enabled: enabled,
+    );
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant _RenderOverlayTutorialHole renderObject,
+  ) {
+    renderObject
+      ..context = context
+      ..overlayTutorialEntry = overlayTutorialEntry
+      ..enabled = enabled;
+  }
 }
 
-class _OverlayTutorialHoleState extends State<OverlayTutorialHole> {
-  late _OverlayTutorialScopeState? _overlayTutorialScopeState;
+class _RenderOverlayTutorialHole extends RenderProxyBox {
+  @override
+  bool get sizedByParent => false;
+
+  /// The widget that holds this [RenderProxyBox]. Theoretically, this won't
+  /// change by any means.
+  final OverlayTutorialHole _overlayTutorialHole;
+
+  BuildContext _context;
+
+  BuildContext get context => _context;
+
+  set context(BuildContext context) {
+    if (_context != context) {
+      _context = context;
+      markNeedsPaint();
+    }
+  }
+
+  OverlayTutorialEntry _overlayTutorialEntry;
+
+  OverlayTutorialEntry get overlayTutorialEntry => _overlayTutorialEntry;
+
+  set overlayTutorialEntry(OverlayTutorialEntry value) {
+    if (_overlayTutorialEntry != value) {
+      _overlayTutorialEntry = value;
+      markNeedsPaint();
+    }
+  }
+
+  bool _enabled;
+
+  bool get enabled => _enabled;
+
+  set enabled(bool enabled) {
+    if (_enabled == enabled) return;
+    _enabled = enabled;
+    markNeedsPaint();
+  }
+
+  _RenderOverlayTutorialHole({
+    required OverlayTutorialHole overlayTutorialHole,
+    required BuildContext context,
+    required OverlayTutorialEntry overlayTutorialEntry,
+    required bool enabled,
+    RenderBox? child,
+  })  : _overlayTutorialHole = overlayTutorialHole,
+        _context = context,
+        _overlayTutorialEntry = overlayTutorialEntry,
+        _enabled = enabled,
+        super(child);
 
   @override
-  void didChangeDependencies() {
-    _overlayTutorialScopeState =
+  void paint(PaintingContext paintingContext, Offset offset) {
+    super.paint(paintingContext, offset);
+    if (child == null) return;
+    final overlayTutorialScopeState =
         context.findAncestorStateOfType<_OverlayTutorialScopeState>();
+    if (overlayTutorialScopeState == null) return;
 
-    final overlayTutorialScope = _overlayTutorialScopeState;
-    if (overlayTutorialScope != null) {
-      if (widget.enabled) {
-        overlayTutorialScope._overlayTutorialHoles[widget] = context;
-      } else {
-        overlayTutorialScope._overlayTutorialHoles.remove(widget);
-      }
+    if (!overlayTutorialScopeState._overlayTutorialHoles
+        .containsKey(_overlayTutorialHole)) {
+      overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole] =
+          OverlayTutorialScopeModel();
     }
-    super.didChangeDependencies();
+
+    final overlayTutorialScopeModel =
+        overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole]!;
+    if (enabled) {
+      overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole] =
+          overlayTutorialScopeModel..context = context;
+    } else {
+      overlayTutorialScopeState._overlayTutorialHoles
+          .remove(_overlayTutorialHole);
+    }
+
+    overlayTutorialScopeState._updateChildren();
   }
 
   @override
-  void didUpdateWidget(OverlayTutorialHole oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.enabled != widget.enabled) {
-      final overlayTutorialScope = _overlayTutorialScopeState;
-      if (overlayTutorialScope != null) {
-        if (widget.enabled) {
-          overlayTutorialScope._overlayTutorialHoles[widget] = context;
-        } else {
-          overlayTutorialScope._overlayTutorialHoles.remove(oldWidget);
-        }
-
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
-          overlayTutorialScope.updateChildren();
-        });
-      }
-    }
-  }
-
-  @override
-  void deactivate() {
-    final overlayTutorialScope = _overlayTutorialScopeState;
-    if (overlayTutorialScope != null) {
-      overlayTutorialScope._overlayTutorialHoles.remove(widget);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        overlayTutorialScope.updateChildren();
-      });
-    }
-    super.deactivate();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<OverlayTutorialEntry>(
+        'overlayTutorialEntry', overlayTutorialEntry));
+    properties.add(DiagnosticsProperty<bool>('enabled', enabled));
+    properties.add(DiagnosticsProperty<BuildContext>('context', context));
+    properties.add(DiagnosticsProperty<OverlayTutorialHole>(
+        '_overlayTutorialHole', _overlayTutorialHole));
   }
 }
