@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage>
     return OverlayTutorialScope(
       enabled: true,
       overlayColor: Colors.blueAccent.withOpacity(.6),
-      // overlayChildren: <Widget>[],
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(

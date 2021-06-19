@@ -168,6 +168,10 @@ Widget build(BuildContext context) {
 - `OverlayTutorialCircleEntry` draws a Circle shape
 - `OverlayTutorialCustomShapeEntry` allows to draw a customized shape
 
+# Disabling Widget
+
+Disabling widget is not provided by this package out of the box. You can achieve this using one of the Flutter widget: `AbsorbPointer` or `IgnorePointer`. Make sure you do not wrap the `OverlayTutorialScope` with these widgets as this will disable the widget in `OverlayTutorialWidgetHint`.
+
 # Screenshot
 
 ![](https://github.com/TabooSun/overlay_tutorial/blob/master/example/images/example_screenshot.png)
