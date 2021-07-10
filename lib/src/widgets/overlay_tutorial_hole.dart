@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) TabooSun and contributors - All Rights Reserved
+ * Written by TabooSun <taboosun1996@gmail.com>, 2021.
+ */
+
 part of overlay_tutorial;
 
 /// Crop a hole on [child] by configuration in [overlayTutorialEntry].
@@ -98,6 +103,10 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
   void paint(PaintingContext paintingContext, Offset offset) {
     super.paint(paintingContext, offset);
     if (child == null) return;
+    updateChildRect();
+  }
+
+  void updateChildRect() {
     final overlayTutorialScopeState =
         context.findAncestorStateOfType<_OverlayTutorialScopeState>();
     if (overlayTutorialScopeState == null) return;
@@ -112,13 +121,23 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
         overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole]!;
     if (enabled) {
       overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole] =
-          overlayTutorialScopeModel..context = context;
+          overlayTutorialScopeModel
+            ..context = context
+            ..rect = computeChildRect()
+            ..renderProxyBox = this;
     } else {
       overlayTutorialScopeState._overlayTutorialHoles
           .remove(_overlayTutorialHole);
     }
 
     overlayTutorialScopeState._updateChildren();
+  }
+
+  Rect computeChildRect() {
+    if (child == null || !child!.hasSize || child!.size == Size.infinite)
+      return Rect.zero;
+    if (child!.localToGlobal(Offset.zero) == Offset.infinite) return Rect.zero;
+    return child!.localToGlobal(Offset.zero) & child!.size;
   }
 
   @override

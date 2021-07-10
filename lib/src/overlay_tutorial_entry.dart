@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) TabooSun and contributors - All Rights Reserved
+ * Written by TabooSun <taboosun1996@gmail.com>, 2021.
+ */
+
 part of overlay_tutorial;
 
 /// Abstract class of Entry.

@@ -1,20 +1,25 @@
+/*
+ * Copyright (C) TabooSun and contributors - All Rights Reserved
+ * Written by TabooSun <taboosun1996@gmail.com>, 2021.
+ */
+
 part of overlay_tutorial;
 
 class OverlayTutorialScopeModel with EquatableMixin {
   /// The [BuildContext] of [OverlayTutorialHole].
   BuildContext? context;
 
+  _RenderOverlayTutorialHole? renderProxyBox;
+
   /// A cached [Rect] of [OverlayTutorialHole].
   Rect? rect;
 
-  Rect computeRect() {
-    final renderBox = context?.findRenderObject() as RenderBox?;
+  bool checkShouldRebuild() {
+    return rect != renderProxyBox!.computeChildRect();
+  }
 
-    if (renderBox == null || !renderBox.attached) {
-      return Rect.zero;
-    }
-
-    return (renderBox.localToGlobal(Offset.zero)) & renderBox.size;
+  void updateRectConfiguration() {
+    renderProxyBox!.updateChildRect();
   }
 
   @override
