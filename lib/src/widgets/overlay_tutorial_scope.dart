@@ -25,12 +25,15 @@ class OverlayTutorialScope extends StatefulWidget {
   /// Note: Direct descendant is unnecessary.
   final Widget child;
 
+  final bool absorbPointer;
+
   const OverlayTutorialScope({
     Key? key,
     this.overlayColor,
     this.enabled = false,
     required this.child,
     this.overlayChildren = const [],
+    this.absorbPointer = true,
   }) : super(key: key);
 
   @override
@@ -65,14 +68,18 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        _OverlayTutorialBackbone(
-          overlayColor: widget.overlayColor,
-          enabled: widget.enabled,
-          overlayTutorialHoles: _overlayTutorialHoles,
-          onEntryRectCalculated: () {
-            _updateChildren();
-          },
-          child: widget.child,
+        AbsorbPointer(
+          absorbing: widget.enabled && widget.absorbPointer,
+          ignoringSemantics: true,
+          child: _OverlayTutorialBackbone(
+            overlayColor: widget.overlayColor,
+            enabled: widget.enabled,
+            overlayTutorialHoles: _overlayTutorialHoles,
+            onEntryRectCalculated: () {
+              _updateChildren();
+            },
+            child: widget.child,
+          ),
         ),
         if (widget.enabled) ...[
           ..._overlayTutorialHoles.entries
