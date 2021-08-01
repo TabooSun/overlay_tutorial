@@ -15,7 +15,7 @@ class OverlayTutorialScope extends StatefulWidget {
 
   /// Whether to enable the overlay tutorial. If this is false, the
   /// [OverlayTutorialHole.enabled] is ignored.
-  final bool enabled;
+  bool enabled;
 
   /// This is rendered by stacking all widgets on top of the overlay entries.
   final List<Widget> overlayChildren;
@@ -27,13 +27,13 @@ class OverlayTutorialScope extends StatefulWidget {
 
   final bool absorbPointer;
 
-  const OverlayTutorialScope({
+  OverlayTutorialScope({
     Key? key,
     this.overlayColor,
     this.enabled = false,
     required this.child,
     this.overlayChildren = const [],
-    this.absorbPointer = true,
+    this.absorbPointer = false,
   }) : super(key: key);
 
   @override
@@ -68,17 +68,24 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        _OverlayTutorialBackbone(
-          overlayColor: widget.overlayColor,
-          enabled: widget.enabled,
-          overlayTutorialHoles: _overlayTutorialHoles,
-          onEntryRectCalculated: () {
-            _updateChildren();
-          },
-          child: AbsorbPointer(
-            absorbing: widget.enabled && widget.absorbPointer,
-            ignoringSemantics: true,
-            child: widget.child,
+        GestureDetector(
+          onTap: widget.enabled ? () {
+            setState(() {
+              widget.enabled = false;
+            });
+          } : null,
+          child: _OverlayTutorialBackbone(
+            overlayColor: widget.overlayColor,
+            enabled: widget.enabled,
+            overlayTutorialHoles: _overlayTutorialHoles,
+            onEntryRectCalculated: () {
+              _updateChildren();
+            },
+            child: AbsorbPointer(
+              absorbing: widget.enabled && widget.absorbPointer,
+              ignoringSemantics: true,
+              child: widget.child,
+            ),
           ),
         ),
         if (widget.enabled) ...[
