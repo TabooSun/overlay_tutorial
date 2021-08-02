@@ -25,7 +25,7 @@ class OverlayTutorialScope extends StatefulWidget {
   /// Note: Direct descendant is unnecessary.
   final Widget child;
 
-  final bool absorbPointer;
+  final bool ignorePointer;
 
   OverlayTutorialScope({
     Key? key,
@@ -33,7 +33,7 @@ class OverlayTutorialScope extends StatefulWidget {
     this.enabled = false,
     required this.child,
     this.overlayChildren = const [],
-    this.absorbPointer = false,
+    this.ignorePointer = false,
   }) : super(key: key);
 
   @override
@@ -81,8 +81,8 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
             onEntryRectCalculated: () {
               _updateChildren();
             },
-            child: AbsorbPointer(
-              absorbing: widget.enabled && widget.absorbPointer,
+            child: IgnorePointer(
+              ignoring: widget.enabled && widget.ignorePointer,
               ignoringSemantics: true,
               child: widget.child,
             ),
