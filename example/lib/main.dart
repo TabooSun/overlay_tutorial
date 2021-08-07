@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage>
     final tutorialColor = Colors.yellow;
     return OverlayTutorialScope(
       enabled: true,
+      absorbPointer: true,
       overlayColor: Colors.blueAccent.withOpacity(.6),
       child: SafeArea(
         child: Scaffold(
