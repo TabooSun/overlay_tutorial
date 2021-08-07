@@ -68,24 +68,17 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        GestureDetector(
-          onTap: widget.enabled ? () {
-            setState(() {
-              widget.enabled = false;
-            });
-          } : null,
-          child: _OverlayTutorialBackbone(
-            overlayColor: widget.overlayColor,
-            enabled: widget.enabled,
-            overlayTutorialHoles: _overlayTutorialHoles,
-            onEntryRectCalculated: () {
-              _updateChildren();
-            },
-            child: AbsorbPointer(
-              absorbing: widget.enabled && widget.absorbPointer,
-              ignoringSemantics: true,
-              child: widget.child,
-            ),
+        _OverlayTutorialBackbone(
+          overlayColor: widget.overlayColor,
+          enabled: widget.enabled,
+          overlayTutorialHoles: _overlayTutorialHoles,
+          onEntryRectCalculated: () {
+            _updateChildren();
+          },
+          child: AbsorbPointer(
+            absorbing: widget.enabled && widget.absorbPointer,
+            ignoringSemantics: true,
+            child: widget.child,
           ),
         ),
         if (widget.enabled) ...[
