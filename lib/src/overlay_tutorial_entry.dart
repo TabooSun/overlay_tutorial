@@ -124,11 +124,17 @@ typedef WidgetFromEntryBuilder = Widget Function(
 /// This is used for placing custom widget aside your [OverlayTutorialEntry].
 /// The [Rect] of the entry's widget is provided.
 class OverlayTutorialWidgetHint {
+  /// The builder for the hint.
+  ///
+  /// Impose [position] to the widget created by [builder] if [position] is not
+  /// null; otherwise, [OverlayTutorialScope] renders the widget created by
+  /// [builder] as it is.
   final WidgetFromEntryBuilder builder;
 
   /// The offset from a [OverlayTutorialEntry].
-  /// If and only if this is null, [child] can be positioned by wrapping with
-  /// [Positioned], [Align] or [Center].
+  ///
+  /// If and only if this is null, you can wrap the widget before returning from
+  /// [builder] with [Positioned], [Align] or [Center].
   final PositionFromEntryFactory? position;
 
   OverlayTutorialWidgetHint({
