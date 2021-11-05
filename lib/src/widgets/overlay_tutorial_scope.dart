@@ -57,9 +57,6 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
           overlayColor: widget.overlayColor,
           enabled: widget.enabled,
           overlayTutorialHoles: _overlayTutorialHoles,
-          onEntryRectCalculated: () {
-            // _updateChildren();
-          },
           child: widget.child,
         ),
         if (widget.enabled) ...[
@@ -116,18 +113,12 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
       overlayTutorialHoles;
 
-  /// This is called each time the entry position and size is being calculated.
-  ///
-  /// This callback will provide the calculated [Rect].
-  final EntryRectCalculationFactory onEntryRectCalculated;
-
   _OverlayTutorialBackbone({
     Key? key,
     this.overlayColor,
     this.enabled = true,
     required this.overlayTutorialHoles,
     required Widget child,
-    required this.onEntryRectCalculated,
   }) : super(
           key: key,
           child: child,
@@ -140,7 +131,6 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
       overlayColor: overlayColor,
       enabled: enabled,
       overlayTutorialHoles: overlayTutorialHoles,
-      onEntryRectCalculated: onEntryRectCalculated,
     );
   }
 
@@ -153,8 +143,7 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
       ..context = context
       ..overlayColor = overlayColor
       ..enabled = enabled
-      ..overlayTutorialHoles = overlayTutorialHoles
-      ..onEntryRectCalculated = onEntryRectCalculated;
+      ..overlayTutorialHoles = overlayTutorialHoles;
   }
 }
 
@@ -206,31 +195,17 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     }
   }
 
-  EntryRectCalculationFactory _onEntryRectCalculated;
-
-  EntryRectCalculationFactory get onEntryRectCalculated =>
-      _onEntryRectCalculated;
-
-  set onEntryRectCalculated(EntryRectCalculationFactory value) {
-    if (_onEntryRectCalculated != value) {
-      _onEntryRectCalculated = value;
-      markNeedsPaint();
-    }
-  }
-
   _RenderOverlayTutorialBackbone({
     Color? overlayColor,
     required HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
         overlayTutorialHoles,
     required BuildContext context,
     required bool enabled,
-    required EntryRectCalculationFactory onEntryRectCalculated,
     RenderBox? child,
   })  : _overlayColor = overlayColor,
         _context = context,
         _enabled = enabled,
         _overlayTutorialHoles = overlayTutorialHoles,
-        _onEntryRectCalculated = onEntryRectCalculated,
         super(child);
 
   @override
@@ -239,8 +214,6 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     properties.add(DiagnosticsProperty<BuildContext>('context', context));
     properties.add(ColorProperty('overlayColor', overlayColor));
     properties.add(DiagnosticsProperty<bool>('enabled', enabled));
-    properties.add(ObjectFlagProperty<EntryRectCalculationFactory>.has(
-        'onEntryRectCalculated', onEntryRectCalculated));
   }
 
   @override
