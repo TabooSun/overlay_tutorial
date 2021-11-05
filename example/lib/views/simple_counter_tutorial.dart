@@ -60,14 +60,15 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final tutorialColor = Colors.yellow;
-    return Stack(
-      children: [
-        OverlayTutorialScope(
-          enabled: _isTutorialEnabled,
-          overlayColor: Colors.blueAccent.withOpacity(.6),
-          child: AbsorbPointer(
-            absorbing: _isTutorialEnabled,
-            child: SafeArea(
+    return SafeArea(
+      child: Stack(
+        children: [
+          OverlayTutorialScope(
+            enabled: _isTutorialEnabled,
+            overlayColor: Colors.blueAccent.withOpacity(.6),
+            // Disable all the widgets. All the widgets are now non-interactive.
+            child: AbsorbPointer(
+              absorbing: _isTutorialEnabled,
               child: Scaffold(
                 appBar: AppBar(
                   title: Text(widget.title),
@@ -199,32 +200,32 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
               ),
             ),
           ),
-        ),
-        if (_isTutorialEnabled)
-          Align(
-            alignment: Alignment.topRight,
-            child: GestureDetector(
-              onTap: () {
-                _isTutorialEnabled = false;
-                setState(() {});
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black,
-                  ),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.red,
+          if (_isTutorialEnabled)
+            Align(
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onTap: () {
+                  _isTutorialEnabled = false;
+                  setState(() {});
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black,
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.red,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
