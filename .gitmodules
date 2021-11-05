@@ -1,3 +1,0 @@
-[submodule "tool/release"]
-	path = tool/release
-	url = git@github.com:TabooSun/flutter_release.git

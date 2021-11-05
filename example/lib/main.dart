@@ -1,3 +1,4 @@
+import 'package:example/views/delayed_item.dart';
 import 'package:example/views/simple_counter_tutorial.dart';
 import 'package:flutter/material.dart';
 
@@ -35,11 +36,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
@@ -57,6 +53,17 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
             child: Text('Simple counter'),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DelayedItem(),
+                ),
+              );
+            },
+            child: Text('Delayed item'),
           ),
         ],
       ),

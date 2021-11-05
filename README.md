@@ -174,7 +174,7 @@ Disabling widget is not provided by this package out of the box. You can achieve
 
 # Screenshot
 
-![](https://github.com/TabooSun/overlay_tutorial/blob/master/example/images/example_screenshot.png)
+![](https://github.com/TabooSun/overlay_tutorial/blob/master/example/images/example_gif.gif)
 
 # API
 
