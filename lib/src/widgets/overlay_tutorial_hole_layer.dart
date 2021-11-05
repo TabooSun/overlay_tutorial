@@ -3,10 +3,7 @@
  * Written by TabooSun <taboosun1996@gmail.com>, 2021.
  */
 
-import 'dart:ui' as ui;
-
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
+part of overlay_tutorial;
 
 class OverlayTutorialHoleLayer extends ContainerLayer {
   final void Function() updateChildRect;
