@@ -98,19 +98,17 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
 
   @override
   void paint(PaintingContext paintingContext, Offset offset) {
-    if (!enabled) {
+    if (!enabled || child == null) {
       super.paint(paintingContext, offset);
-      return;
+    } else {
+      paintingContext.pushLayer(
+        OverlayTutorialHoleLayer(
+          updateChildRect: updateChildRect,
+        ),
+        super.paint,
+        offset,
+      );
     }
-    if (child == null) return;
-
-    paintingContext.pushLayer(
-      OverlayTutorialHoleLayer(
-        updateChildRect: updateChildRect,
-      ),
-      super.paint,
-      offset,
-    );
 
     updateChildRect();
   }
