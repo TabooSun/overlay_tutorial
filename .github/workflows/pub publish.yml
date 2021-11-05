@@ -5,9 +5,8 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    tags:        
-      - '*'
+  create:
+    ref_type: tag
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,5 +28,7 @@ jobs:
         # uses: k-paxian/dart-package-publisher@8ecb150dfe6de74abafe0faf3c208fe43f4af12a
         uses: k-paxian/dart-package-publisher@v1.3
         with:
+          accessToken: ${{ secrets.PUB_PUBLISH_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.PUB_PUBLISH_REFRESH_TOKEN }}
           
         
