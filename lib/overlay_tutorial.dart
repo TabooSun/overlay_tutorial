@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:overlay_tutorial/src/widgets/overlay_tutorial_hole_layer.dart';
 
 part 'src/overlay_tutorial_entry.dart';
 

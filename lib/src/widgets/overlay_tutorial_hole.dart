@@ -48,9 +48,6 @@ class OverlayTutorialHole extends SingleChildRenderObjectWidget {
 }
 
 class _RenderOverlayTutorialHole extends RenderProxyBox {
-  @override
-  bool get sizedByParent => false;
-
   /// The widget that holds this [RenderProxyBox]. Theoretically, this won't
   /// change by any means.
   final OverlayTutorialHole _overlayTutorialHole;
@@ -101,8 +98,20 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
 
   @override
   void paint(PaintingContext paintingContext, Offset offset) {
-    super.paint(paintingContext, offset);
+    if (!enabled) {
+      super.paint(paintingContext, offset);
+      return;
+    }
     if (child == null) return;
+
+    paintingContext.pushLayer(
+      OverlayTutorialHoleLayer(
+        updateChildRect: updateChildRect,
+      ),
+      super.paint,
+      offset,
+    );
+
     updateChildRect();
   }
 
@@ -111,23 +120,25 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
         context.findAncestorStateOfType<_OverlayTutorialScopeState>();
     if (overlayTutorialScopeState == null) return;
 
-    if (!overlayTutorialScopeState._overlayTutorialHoles
-        .containsKey(_overlayTutorialHole)) {
-      overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole] =
-          OverlayTutorialScopeModel();
-    }
-
-    final overlayTutorialScopeModel =
-        overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole]!;
-    if (enabled) {
-      overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole] =
-          overlayTutorialScopeModel
-            ..context = context
-            ..rect = computeChildRect()
-            ..renderProxyBox = this;
-    } else {
+    if (!enabled) {
       overlayTutorialScopeState._overlayTutorialHoles
           .remove(_overlayTutorialHole);
+    } else {
+      final newOverlayTutorialScopeModel = OverlayTutorialScopeModel(
+        context: context,
+        rect: computeChildRect(),
+      );
+
+      if (overlayTutorialScopeState._overlayTutorialHoles
+              .containsKey(_overlayTutorialHole) &&
+          overlayTutorialScopeState
+                  ._overlayTutorialHoles[_overlayTutorialHole] ==
+              newOverlayTutorialScopeModel) {
+        return;
+      }
+
+      overlayTutorialScopeState._overlayTutorialHoles[_overlayTutorialHole] =
+          newOverlayTutorialScopeModel;
     }
 
     overlayTutorialScopeState._updateChildren();

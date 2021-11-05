@@ -7,20 +7,15 @@ part of overlay_tutorial;
 
 class OverlayTutorialScopeModel with EquatableMixin {
   /// The [BuildContext] of [OverlayTutorialHole].
-  BuildContext? context;
-
-  _RenderOverlayTutorialHole? renderProxyBox;
+  final BuildContext? context;
 
   /// A cached [Rect] of [OverlayTutorialHole].
-  Rect? rect;
+  final Rect? rect;
 
-  bool checkShouldRebuild() {
-    return rect != renderProxyBox!.computeChildRect();
-  }
-
-  void updateRectConfiguration() {
-    renderProxyBox!.updateChildRect();
-  }
+  OverlayTutorialScopeModel({
+    this.context,
+    this.rect,
+  });
 
   @override
   List<Object?> get props => [

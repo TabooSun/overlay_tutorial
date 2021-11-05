@@ -40,25 +40,13 @@ class OverlayTutorialScope extends StatefulWidget {
 class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   /// Store all the dependants' [Rect] information.
   final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
-  _overlayTutorialHoles = HashMap();
+      _overlayTutorialHoles = HashMap();
 
   void _updateChildren() {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (!mounted) return;
       setState(() {});
-
-        if (mounted && _checkIsParentRectUpdated()) {
-          _overlayTutorialHoles.entries.forEach((element) {
-            element.value.updateRectConfiguration();
-          });
-          _updateChildren();
-        }
     });
-  }
-
-  bool _checkIsParentRectUpdated() {
-    return _overlayTutorialHoles.entries
-        .any((element) => element.value.checkShouldRebuild());
   }
 
   @override
@@ -70,44 +58,44 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
           enabled: widget.enabled,
           overlayTutorialHoles: _overlayTutorialHoles,
           onEntryRectCalculated: () {
-            _updateChildren();
+            // _updateChildren();
           },
           child: widget.child,
         ),
         if (widget.enabled) ...[
           ..._overlayTutorialHoles.entries
               .map((entry) {
-            return entry.key.overlayTutorialEntry.overlayTutorialHints
-                .map((hint) {
-              final entryRect = entry.value.rect;
-              if (entryRect == null) return const SizedBox.shrink();
+                return entry.key.overlayTutorialEntry.overlayTutorialHints
+                    .map((hint) {
+                  final entryRect = entry.value.rect;
+                  if (entryRect == null) return const SizedBox.shrink();
 
-              final overlayTutorialEntry = entry.key.overlayTutorialEntry;
-              if (overlayTutorialEntry is OverlayTutorialRectEntry) {
-                final rRect = OverlayTutorialRectEntry.applyDesignToEntry(
-                  context,
-                  entryRect,
-                  overlayTutorialEntry,
-                );
-                if (hint.position == null)
-                  return hint.builder(context, entryRect, rRect);
+                  final overlayTutorialEntry = entry.key.overlayTutorialEntry;
+                  if (overlayTutorialEntry is OverlayTutorialRectEntry) {
+                    final rRect = OverlayTutorialRectEntry.applyDesignToEntry(
+                      context,
+                      entryRect,
+                      overlayTutorialEntry,
+                    );
+                    if (hint.position == null)
+                      return hint.builder(context, entryRect, rRect);
 
-                final position = hint.position!(entryRect);
+                    final position = hint.position!(entryRect);
 
-                return Positioned(
-                  left: position.dx,
-                  top: position.dy,
-                  child: hint.builder(
-                    context,
-                    entryRect,
-                    rRect,
-                  ),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            }).toList(growable: false);
-          })
+                    return Positioned(
+                      left: position.dx,
+                      top: position.dy,
+                      child: hint.builder(
+                        context,
+                        entryRect,
+                        rRect,
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }).toList(growable: false);
+              })
               .expand((x) => x)
               .toList(),
           ...widget.overlayChildren,
@@ -126,7 +114,7 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
 
   /// See [_OverlayTutorialScopeState._overlayTutorialHoles] for detail.
   final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
-  overlayTutorialHoles;
+      overlayTutorialHoles;
 
   /// This is called each time the entry position and size is being calculated.
   ///
@@ -141,9 +129,9 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
     required Widget child,
     required this.onEntryRectCalculated,
   }) : super(
-    key: key,
-    child: child,
-  );
+          key: key,
+          child: child,
+        );
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -157,8 +145,10 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(BuildContext context,
-      covariant _RenderOverlayTutorialBackbone renderObject,) {
+  void updateRenderObject(
+    BuildContext context,
+    covariant _RenderOverlayTutorialBackbone renderObject,
+  ) {
     renderObject
       ..context = context
       ..overlayColor = overlayColor
@@ -206,7 +196,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
   /// See [_OverlayTutorialBackbone.overlayTutorialHoles] for detail.
   HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
-  get overlayTutorialHoles => _overlayTutorialHoles;
+      get overlayTutorialHoles => _overlayTutorialHoles;
 
   set overlayTutorialHoles(
       HashMap<OverlayTutorialHole, OverlayTutorialScopeModel> value) {
@@ -231,13 +221,12 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
   _RenderOverlayTutorialBackbone({
     Color? overlayColor,
     required HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
-    overlayTutorialHoles,
+        overlayTutorialHoles,
     required BuildContext context,
     required bool enabled,
     required EntryRectCalculationFactory onEntryRectCalculated,
     RenderBox? child,
-  })
-      : _overlayColor = overlayColor,
+  })  : _overlayColor = overlayColor,
         _context = context,
         _enabled = enabled,
         _overlayTutorialHoles = overlayTutorialHoles,
@@ -260,27 +249,21 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
     if (!enabled) return;
 
-    final size = MediaQuery
-        .of(this.context)
-        .size;
+    final size = MediaQuery.of(this.context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
 
-    var path = Path()
-      ..addRect(Rect.fromLTWH(0, 0, screenWidth, screenHeight));
+    var path = Path()..addRect(Rect.fromLTWH(0, 0, screenWidth, screenHeight));
     path = _drawTutorialEntries(this.context, path);
 
-    final isDarkTheme = Theme
-        .of(this.context)
-        .brightness == Brightness.dark;
+    final isDarkTheme = Theme.of(this.context).brightness == Brightness.dark;
     final overlayColor = this.overlayColor ??
         (isDarkTheme
             ? Colors.white.withOpacity(0.8)
             : Colors.black.withOpacity(0.6));
     context.canvas.drawPath(
       path,
-      Paint()
-        ..color = overlayColor,
+      Paint()..color = overlayColor,
     );
   }
 
@@ -289,13 +272,11 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
       // HACK: Add empty rect to path to overcome
       // the issue: https://github.com/TabooSun/overlay_tutorial/issues/15.
       // Remove it when there is any better solution or Flutter fixes it.
-
       if (kIsWeb) {
         path = Path.combine(
           PathOperation.difference,
           path,
-          Path()
-            ..addRect(Rect.zero),
+          Path()..addRect(Rect.zero),
         );
       }
 
@@ -312,16 +293,13 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
         if (rRectToDraw.hasNaN) return;
         // Draw Overlay Tutorial Rect Entry
-
         path = Path.combine(
           PathOperation.difference,
           path,
-          Path()
-            ..addRRect(rRectToDraw),
+          Path()..addRRect(rRectToDraw),
         );
       } else if (overlayTutorialEntry is OverlayTutorialCircleEntry) {
         // Draw Overlay Tutorial Circle Entry
-
         final ovalRect = OverlayTutorialCircleEntry.applyDesignToEntry(
           rect,
           overlayTutorialEntry,

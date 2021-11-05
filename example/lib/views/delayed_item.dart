@@ -21,7 +21,7 @@ class _DelayedItemState extends State<DelayedItem> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1500)).then((value) {
+    Future.delayed(const Duration(milliseconds: 5000)).then((value) {
       _showDelayedWidget = true;
       setState(() {});
     });
