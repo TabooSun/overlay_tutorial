@@ -21,15 +21,15 @@ class OverlayTutorialHoleLayer extends ContainerLayer {
     _scheduleUpdate();
   }
 
-  void _scheduleUpdate() {
-    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-      updateChildRect();
-    });
-  }
-
   @override
   void attach(covariant Object owner) {
     super.attach(owner);
     _scheduleUpdate();
+  }
+
+  void _scheduleUpdate() {
+    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+      updateChildRect();
+    });
   }
 }
