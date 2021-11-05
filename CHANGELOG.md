@@ -1,3 +1,11 @@
+## [2.1.0] - 6/11/2021
+
+- Improve package performance.
+  - Previous version tends to rebuild recursively non-stop which is fixed in this release.
+- Add more example
+  - Check the `example` project.
+  - Due to community request, concrete example for disabling widget is added. Check `SimpleCounterTutorial` widget in `example` project.
+
 ## [2.0.4] - 19/6/2021
 
 - Update CHANGELOG.md.
