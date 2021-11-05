@@ -30,5 +30,6 @@ jobs:
         with:
           accessToken: ${{ secrets.PUB_PUBLISH_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.PUB_PUBLISH_REFRESH_TOKEN }}
+          force: true
           
         
