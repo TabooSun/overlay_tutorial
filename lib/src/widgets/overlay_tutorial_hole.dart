@@ -143,8 +143,9 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
   }
 
   Rect computeChildRect() {
-    if (child == null || !child!.hasSize || child!.size == Size.infinite)
+    if (child == null || !child!.hasSize || child!.size == Size.infinite) {
       return Rect.zero;
+    }
     if (child!.localToGlobal(Offset.zero) == Offset.infinite) return Rect.zero;
     return child!.localToGlobal(Offset.zero) & child!.size;
   }

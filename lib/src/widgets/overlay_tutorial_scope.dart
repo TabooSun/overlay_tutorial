@@ -74,8 +74,9 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
                       entryRect,
                       overlayTutorialEntry,
                     );
-                    if (hint.position == null)
+                    if (hint.position == null) {
                       return hint.builder(context, entryRect, rRect);
+                    }
 
                     final position = hint.position!(entryRect);
 
@@ -189,7 +190,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
   set overlayTutorialHoles(
       HashMap<OverlayTutorialHole, OverlayTutorialScopeModel> value) {
-    if (!MapEquality().equals(_overlayTutorialHoles, value)) {
+    if (!const MapEquality().equals(_overlayTutorialHoles, value)) {
       _overlayTutorialHoles = value;
       markNeedsPaint();
     }

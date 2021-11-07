@@ -4,12 +4,24 @@ analyzer:
   exclude: [build/**]
   errors:
     invalid_use_of_protected_member: error
-#    prefer_final_fields: error
+    invalid_override_of_non_virtual_member: error
+    annotate_overrides: error
+    always_use_package_imports: error
 
 linter:
   rules:
-    curly_braces_in_flow_control_structures: false
+    curly_braces_in_flow_control_structures: true
     prefer_final_fields: true
     unawaited_futures: true
     prefer_final_locals: true
     prefer_final_in_for_each: true
+    always_declare_return_types: true
+    exhaustive_cases: true
+    slash_for_doc_comments: true
+    prefer_conditional_assignment: true
+    always_use_package_imports: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    unnecessary_const: true
+    annotate_overrides: true
