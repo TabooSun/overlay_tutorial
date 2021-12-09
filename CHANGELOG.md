@@ -1,3 +1,8 @@
+## [2.1.1] - 9/12/2021
+
+- Add test
+- Fix for [flutter#91753](https://github.com/flutter/flutter/pull/91753) compatibility
+
 ## [2.1.0] - 6/11/2021
 
 - Improve package performance.
