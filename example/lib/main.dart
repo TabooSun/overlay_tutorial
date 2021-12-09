@@ -52,18 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               );
             },
-            child: Text('Simple counter'),
+            child: const Text('Simple counter'),
           ),
           OutlinedButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DelayedItem(),
+                  builder: (context) => const DelayedItem(),
                 ),
               );
             },
-            child: Text('Delayed item'),
+            child: const Text('Delayed item'),
           ),
         ],
       ),

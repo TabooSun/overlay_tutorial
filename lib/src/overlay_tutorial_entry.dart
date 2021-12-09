@@ -24,11 +24,11 @@ abstract class OverlayTutorialEntry {
       identical(this, other) ||
       other is OverlayTutorialEntry &&
           runtimeType == other.runtimeType &&
-          ListEquality()
+          const ListEquality()
               .equals(other.overlayTutorialHints, overlayTutorialHints);
 
   @override
-  int get hashCode => ListEquality().hash(overlayTutorialHints);
+  int get hashCode => const ListEquality().hash(overlayTutorialHints);
 }
 
 /// Draw a hole as a circle on the widget.

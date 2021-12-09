@@ -59,7 +59,7 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final tutorialColor = Colors.yellow;
+    const tutorialColor = Colors.yellow;
     return SafeArea(
       child: Stack(
         children: [
@@ -103,14 +103,14 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
                               return path;
                             },
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.share,
                             size: 64,
                           ),
                         ),
                       ),
                       const SizedBox(height: 64),
-                      Text(
+                      const Text(
                         'You have pushed the button this many times:',
                       ),
                       OverlayTutorialHole(
@@ -194,7 +194,7 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
                   child: FloatingActionButton(
                     onPressed: _incrementCounter,
                     tooltip: 'Increment',
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                   ),
                 ),
               ),
@@ -212,11 +212,11 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.black,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Colors.red,
                     ),

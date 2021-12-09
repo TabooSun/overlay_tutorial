@@ -35,12 +35,12 @@ class _DelayedItemState extends State<DelayedItem> {
           enabled: _isTutorialEnabled,
           child: Scaffold(
             appBar: AppBar(
-              title: Text('Delayed item'),
+              title: const Text('Delayed item'),
             ),
             body: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Text('Hello world!'),
                 ),
                 OverlayTutorialHole(
@@ -65,7 +65,7 @@ class _DelayedItemState extends State<DelayedItem> {
                   ),
                   child: _showDelayedWidget
                       ? Container(
-                          child: Text('I am here now!!!'),
+                          child: const Text('I am here now!!!'),
                         )
                       : const SizedBox.shrink(),
                 ),
@@ -85,11 +85,11 @@ class _DelayedItemState extends State<DelayedItem> {
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.black,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.close,
                     color: Colors.red,
                   ),
