@@ -6,7 +6,6 @@
 library overlay_tutorial;
 
 import 'dart:collection';
-import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
@@ -15,7 +14,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 
 part 'src/model/overlay_tutorial_scope_model.dart';
 
