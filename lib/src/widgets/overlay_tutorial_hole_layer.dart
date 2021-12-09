@@ -13,8 +13,8 @@ class OverlayTutorialHoleLayer extends ContainerLayer {
   });
 
   @override
-  void addToScene(ui.SceneBuilder builder, [Offset layerOffset = Offset.zero]) {
-    super.addToScene(builder, layerOffset);
+  void addToScene(ui.SceneBuilder builder) {
+    super.addToScene(builder);
     _scheduleUpdate();
   }
 
