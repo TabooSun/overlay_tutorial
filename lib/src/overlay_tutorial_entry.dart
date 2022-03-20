@@ -10,7 +10,7 @@ part of overlay_tutorial;
 /// - See [OverlayTutorialCircleEntry] for circle shape entry.
 /// - See [OverlayTutorialRectEntry] for rectangular shape entry.
 /// - See [OverlayTutorialCustomShapeEntry] for custom shape entry.
-abstract class OverlayTutorialEntry {
+abstract class OverlayTutorialEntry with EquatableMixin {
   /// Optional hint that can be placed beside the hole as the position of the
   /// target widget is provided. See [PositionFromEntryFactory] for detail.
   final List<OverlayTutorialWidgetHint> overlayTutorialHints;
@@ -20,15 +20,9 @@ abstract class OverlayTutorialEntry {
   });
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is OverlayTutorialEntry &&
-          runtimeType == other.runtimeType &&
-          const ListEquality()
-              .equals(other.overlayTutorialHints, overlayTutorialHints);
-
-  @override
-  int get hashCode => const ListEquality().hash(overlayTutorialHints);
+  List<Object?> get props => [
+        overlayTutorialHints,
+      ];
 }
 
 /// Draw a hole as a circle on the widget.
@@ -53,6 +47,13 @@ class OverlayTutorialCircleEntry extends OverlayTutorialEntry {
       radius: entry.radius,
     );
   }
+
+  @override
+  List<Object?> get props =>
+      super.props +
+      [
+        radius,
+      ];
 }
 
 /// Draw a hole as a rectangular on the widget.
@@ -86,6 +87,14 @@ class OverlayTutorialRectEntry extends OverlayTutorialEntry {
       entry.radius,
     );
   }
+
+  @override
+  List<Object?> get props =>
+      super.props +
+      [
+        radius,
+        padding,
+      ];
 }
 
 /// * [rect] refers to the [Rect] of [OverlayTutorialEntry.widgetKey].
@@ -105,25 +114,28 @@ class OverlayTutorialCustomShapeEntry extends OverlayTutorialEntry {
   }) : super(
           overlayTutorialHints: overlayTutorialHints,
         );
+
+  @override
+  List<Object?> get props =>
+      super.props +
+      [
+        shapeBuilder,
+      ];
 }
 
 /// [rect] is the [Rect] of [OverlayTutorialEntry].
 typedef PositionFromEntryFactory = Offset Function(Rect rect);
 
-/// * [rect] is the pure [Rect] of [OverlayTutorialEntry].
-///
-/// * [rRect] is a [RRect] which is a [Rect] of [OverlayTutorialEntry] with
-/// [OverlayTutorialRectEntry.padding] & [OverlayTutorialRectEntry.radius]
-/// applied. This is null when entry is not [OverlayTutorialRectEntry]
+/// Builder factory for hint widget.
 typedef WidgetFromEntryBuilder = Widget Function(
   BuildContext context,
-  Rect rect,
-  RRect rRect,
+  OverlayTutorialEntryRect entryRect,
 );
 
 /// This is used for placing custom widget aside your [OverlayTutorialEntry].
 /// The [Rect] of the entry's widget is provided.
-class OverlayTutorialWidgetHint {
+class OverlayTutorialWidgetHint<T extends OverlayTutorialEntryRect>
+    with EquatableMixin {
   /// The builder for the hint.
   ///
   /// Impose [position] to the widget created by [builder] if [position] is not
@@ -143,13 +155,26 @@ class OverlayTutorialWidgetHint {
   });
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is OverlayTutorialWidgetHint &&
-          runtimeType == other.runtimeType &&
-          builder == other.builder &&
-          position == other.position;
+  List<Object?> get props => [
+        builder,
+        position,
+      ];
+}
 
-  @override
-  int get hashCode => builder.hashCode ^ position.hashCode;
+/// The [Rect] information of a [OverlayTutorialEntry].
+class OverlayTutorialEntryRect {
+  /// The pure [Rect] of [OverlayTutorialEntry].
+  final Rect rect;
+
+  /// [Rect] of [OverlayTutorialEntry] with
+  /// [OverlayTutorialRectEntry.padding] & [OverlayTutorialRectEntry.radius]
+  /// applied.
+  ///
+  /// This is null when entry is not [OverlayTutorialRectEntry].
+  final RRect? rRect;
+
+  OverlayTutorialEntryRect({
+    required this.rect,
+    this.rRect,
+  });
 }

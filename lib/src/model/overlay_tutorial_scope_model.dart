@@ -12,14 +12,18 @@ class OverlayTutorialScopeModel with EquatableMixin {
   /// A cached [Rect] of [OverlayTutorialHole].
   final Rect? rect;
 
+  final OverlayTutorialEntry overlayTutorialEntry;
+
   OverlayTutorialScopeModel({
     this.context,
     this.rect,
+    required this.overlayTutorialEntry,
   });
 
   @override
   List<Object?> get props => [
         context,
         rect,
+        overlayTutorialEntry,
       ];
 }
