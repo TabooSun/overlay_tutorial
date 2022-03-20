@@ -25,7 +25,7 @@ class OverlayTutorialHoleLayer extends ContainerLayer {
   }
 
   void _scheduleUpdate() {
-    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       updateChildRect();
     });
   }

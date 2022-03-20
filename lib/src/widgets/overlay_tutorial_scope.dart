@@ -39,11 +39,11 @@ class OverlayTutorialScope extends StatefulWidget {
 
 class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   /// Store all the dependants' [Rect] information.
-  final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
-      _overlayTutorialHoles = HashMap();
+  final Map<OverlayTutorialHole, OverlayTutorialScopeModel>
+      _overlayTutorialHoles = {};
 
   void _updateChildren() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       setState(() {});
     });
@@ -62,36 +62,44 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
         if (widget.enabled) ...[
           ..._overlayTutorialHoles.entries
               .map((entry) {
-                return entry.key.overlayTutorialEntry.overlayTutorialHints
+                return entry.value.overlayTutorialEntry.overlayTutorialHints
                     .map((hint) {
                   final entryRect = entry.value.rect;
                   if (entryRect == null) return const SizedBox.shrink();
 
-                  final overlayTutorialEntry = entry.key.overlayTutorialEntry;
+                  final overlayTutorialEntry = entry.value.overlayTutorialEntry;
+                  RRect? rRect;
                   if (overlayTutorialEntry is OverlayTutorialRectEntry) {
-                    final rRect = OverlayTutorialRectEntry.applyDesignToEntry(
+                    rRect = OverlayTutorialRectEntry.applyDesignToEntry(
                       context,
                       entryRect,
                       overlayTutorialEntry,
                     );
-                    if (hint.position == null) {
-                      return hint.builder(context, entryRect, rRect);
-                    }
+                  }
 
-                    final position = hint.position!(entryRect);
-
-                    return Positioned(
-                      left: position.dx,
-                      top: position.dy,
-                      child: hint.builder(
-                        context,
-                        entryRect,
-                        rRect,
+                  if (hint.position == null) {
+                    return hint.builder(
+                      context,
+                      OverlayTutorialEntryRect(
+                        rect: entryRect,
+                        rRect: rRect,
                       ),
                     );
-                  } else {
-                    return const SizedBox.shrink();
                   }
+
+                  final position = hint.position!(entryRect);
+
+                  return Positioned(
+                    left: position.dx,
+                    top: position.dy,
+                    child: hint.builder(
+                      context,
+                      OverlayTutorialEntryRect(
+                        rect: entryRect,
+                        rRect: rRect,
+                      ),
+                    ),
+                  );
                 }).toList(growable: false);
               })
               .expand((x) => x)
@@ -111,7 +119,7 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   final bool enabled;
 
   /// See [_OverlayTutorialScopeState._overlayTutorialHoles] for detail.
-  final HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+  final Map<OverlayTutorialHole, OverlayTutorialScopeModel>
       overlayTutorialHoles;
 
   _OverlayTutorialBackbone({
@@ -182,14 +190,14 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     markNeedsPaint();
   }
 
-  HashMap<OverlayTutorialHole, OverlayTutorialScopeModel> _overlayTutorialHoles;
+  Map<OverlayTutorialHole, OverlayTutorialScopeModel> _overlayTutorialHoles;
 
   /// See [_OverlayTutorialBackbone.overlayTutorialHoles] for detail.
-  HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+  Map<OverlayTutorialHole, OverlayTutorialScopeModel>
       get overlayTutorialHoles => _overlayTutorialHoles;
 
   set overlayTutorialHoles(
-      HashMap<OverlayTutorialHole, OverlayTutorialScopeModel> value) {
+      Map<OverlayTutorialHole, OverlayTutorialScopeModel> value) {
     if (!const MapEquality().equals(_overlayTutorialHoles, value)) {
       _overlayTutorialHoles = value;
       markNeedsPaint();
@@ -198,7 +206,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
 
   _RenderOverlayTutorialBackbone({
     Color? overlayColor,
-    required HashMap<OverlayTutorialHole, OverlayTutorialScopeModel>
+    required Map<OverlayTutorialHole, OverlayTutorialScopeModel>
         overlayTutorialHoles,
     required BuildContext context,
     required bool enabled,
@@ -215,6 +223,9 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     properties.add(DiagnosticsProperty<BuildContext>('context', context));
     properties.add(ColorProperty('overlayColor', overlayColor));
     properties.add(DiagnosticsProperty<bool>('enabled', enabled));
+    properties.add(DiagnosticsProperty<
+            Map<OverlayTutorialHole, OverlayTutorialScopeModel>>(
+        'overlayTutorialHoles', overlayTutorialHoles));
   }
 
   @override

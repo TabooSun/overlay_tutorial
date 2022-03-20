@@ -121,7 +121,7 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
                           overlayTutorialHints: <OverlayTutorialWidgetHint>[
                             OverlayTutorialWidgetHint(
                               position: (rect) => Offset(0, rect.bottom),
-                              builder: (context, rect, rRect) {
+                              builder: (context, entryRect) {
                                 return SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   child: Center(
@@ -152,12 +152,12 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
                   overlayTutorialEntry: OverlayTutorialRectEntry(
                     padding: const EdgeInsets.all(8.0),
                     radius: const Radius.circular(16.0),
-                    overlayTutorialHints: <OverlayTutorialWidgetHint>[
+                    overlayTutorialHints: [
                       OverlayTutorialWidgetHint(
-                        builder: (context, rect, rRect) {
+                        builder: (context, entryRect) {
                           return Positioned(
-                            top: rRect.top - 24.0,
-                            left: rRect.left,
+                            top: entryRect.rRect!.top - 24.0,
+                            left: entryRect.rRect!.left,
                             child: Text(
                               'Try this out',
                               style: textTheme.bodyText2!
@@ -168,9 +168,9 @@ class _SimpleCounterTutorialState extends State<SimpleCounterTutorial>
                       ),
                       OverlayTutorialWidgetHint(
                         position: (rect) => Offset(0, rect.center.dy),
-                        builder: (context, rect, rRect) {
+                        builder: (context, entryRect) {
                           return SizedBox(
-                            width: rRect.left,
+                            width: entryRect.rRect!.left,
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Row(

@@ -125,6 +125,7 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
       final newOverlayTutorialScopeModel = OverlayTutorialScopeModel(
         context: context,
         rect: computeChildRect(),
+        overlayTutorialEntry: overlayTutorialEntry,
       );
 
       if (overlayTutorialScopeState._overlayTutorialHoles
