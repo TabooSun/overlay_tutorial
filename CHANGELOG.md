@@ -1,3 +1,7 @@
+## [2.2.2] - 21/03/2022
+
+- Fix broken screenshot in README.
+
 ## [2.2.1] - 21/03/2022
 
 - Fix [#36](https://github.com/TabooSun/overlay_tutorial/issues/36).

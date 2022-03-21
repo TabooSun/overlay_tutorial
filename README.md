@@ -206,7 +206,7 @@ Disabling widget is not provided by this package out of the box. You can achieve
 
 # Screenshot
 
-![](https://github.com/TabooSun/overlay_tutorial/blob/master/example/images/example_gif.gif)
+![](https://github.com/TabooSun/overlay_tutorial/blob/main/example/images/example_gif.gif?raw=true)
 
 # API
 
