@@ -1,6 +1,10 @@
+## [2.2.1] - 21/03/2022
+
+- Fix [#36](https://github.com/TabooSun/overlay_tutorial/issues/36).
+
 ## [2.2.0] - 20/03/2022
 
-- Fix [#14](https://github.com/TabooSun/overlay_tutorial/issues/34). `OverlayTutorialScope` never calls `OverlayTutorialWidgetHint` builder of `OverlayTutorialCustomShapeEntry`.
+- Fix [#34](https://github.com/TabooSun/overlay_tutorial/issues/34). `OverlayTutorialScope` never calls `OverlayTutorialWidgetHint` builder of `OverlayTutorialCustomShapeEntry`.
   ### Breaking API Changes
     - `WidgetFromEntryBuilder` no longer provides `rect` & `rRect`. We merged them into `entryRect` of
       type `OverlayTutorialEntryRect`.
