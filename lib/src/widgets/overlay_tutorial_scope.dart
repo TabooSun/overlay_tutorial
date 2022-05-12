@@ -43,7 +43,7 @@ class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
       _overlayTutorialHoles = {};
 
   void _updateChildren() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       setState(() {});
     });
