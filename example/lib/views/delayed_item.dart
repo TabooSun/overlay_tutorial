@@ -64,9 +64,7 @@ class _DelayedItemState extends State<DelayedItem> {
                     ],
                   ),
                   child: _showDelayedWidget
-                      ? Container(
-                          child: const Text('I am here now!!!'),
-                        )
+                      ? const Text('I am here now!!!')
                       : const SizedBox.shrink(),
                 ),
               ],

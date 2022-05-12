@@ -34,10 +34,10 @@ class OverlayTutorialScope extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OverlayTutorialScopeState createState() => _OverlayTutorialScopeState();
+  OverlayTutorialScopeState createState() => OverlayTutorialScopeState();
 }
 
-class _OverlayTutorialScopeState extends State<OverlayTutorialScope> {
+class OverlayTutorialScopeState extends State<OverlayTutorialScope> {
   /// Store all the dependants' [Rect] information.
   final Map<OverlayTutorialHole, OverlayTutorialScopeModel>
       _overlayTutorialHoles = {};
@@ -118,11 +118,11 @@ class _OverlayTutorialBackbone extends SingleChildRenderObjectWidget {
   /// See [OverlayTutorialScope.enabled] for detail.
   final bool enabled;
 
-  /// See [_OverlayTutorialScopeState._overlayTutorialHoles] for detail.
+  /// See [OverlayTutorialScopeState._overlayTutorialHoles] for detail.
   final Map<OverlayTutorialHole, OverlayTutorialScopeModel>
       overlayTutorialHoles;
 
-  _OverlayTutorialBackbone({
+  const _OverlayTutorialBackbone({
     Key? key,
     this.overlayColor,
     this.enabled = true,
@@ -197,7 +197,8 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
       get overlayTutorialHoles => _overlayTutorialHoles;
 
   set overlayTutorialHoles(
-      Map<OverlayTutorialHole, OverlayTutorialScopeModel> value) {
+    Map<OverlayTutorialHole, OverlayTutorialScopeModel> value,
+  ) {
     if (!const MapEquality().equals(_overlayTutorialHoles, value)) {
       _overlayTutorialHoles = value;
       markNeedsPaint();
@@ -223,9 +224,12 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
     properties.add(DiagnosticsProperty<BuildContext>('context', context));
     properties.add(ColorProperty('overlayColor', overlayColor));
     properties.add(DiagnosticsProperty<bool>('enabled', enabled));
-    properties.add(DiagnosticsProperty<
-            Map<OverlayTutorialHole, OverlayTutorialScopeModel>>(
-        'overlayTutorialHoles', overlayTutorialHoles));
+    properties.add(
+      DiagnosticsProperty<Map<OverlayTutorialHole, OverlayTutorialScopeModel>>(
+        'overlayTutorialHoles',
+        overlayTutorialHoles,
+      ),
+    );
   }
 
   @override
@@ -253,7 +257,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
   }
 
   Path _drawTutorialEntries(BuildContext context, Path path) {
-    overlayTutorialHoles.entries.forEach((entry) {
+    for (final entry in overlayTutorialHoles.entries) {
       // HACK: Add empty rect to path to overcome
       // the issue: https://github.com/TabooSun/overlay_tutorial/issues/15.
       // Remove it when there is any better solution or Flutter fixes it.
@@ -266,7 +270,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
       }
 
       final rect = entry.value.rect;
-      if (rect == null) return;
+      if (rect == null) continue;
 
       final overlayTutorialEntry = entry.key.overlayTutorialEntry;
       if (overlayTutorialEntry is OverlayTutorialRectEntry) {
@@ -276,7 +280,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
           overlayTutorialEntry,
         );
 
-        if (rRectToDraw.hasNaN) return;
+        if (rRectToDraw.hasNaN) continue;
         // Draw Overlay Tutorial Rect Entry
         path = Path.combine(
           PathOperation.difference,
@@ -290,7 +294,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
           overlayTutorialEntry,
         );
 
-        if (ovalRect.hasNaN) return;
+        if (ovalRect.hasNaN) continue;
 
         path = Path.combine(
           PathOperation.difference,
@@ -303,7 +307,7 @@ class _RenderOverlayTutorialBackbone extends RenderProxyBox {
       } else if (overlayTutorialEntry is OverlayTutorialCustomShapeEntry) {
         path = overlayTutorialEntry.shapeBuilder.call(rect, path);
       }
-    });
+    }
 
     return path;
   }

@@ -5,7 +5,6 @@
 
 library overlay_tutorial;
 
-import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
