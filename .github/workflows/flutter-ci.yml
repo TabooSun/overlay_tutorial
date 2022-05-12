@@ -31,6 +31,9 @@ jobs:
         with:
           channel: $FLUTTER_VERSION
 
+      - name: Get Pub packages
+        run: flutter pub get
+
       - name: Analyze code
         run: flutter analyze
 
