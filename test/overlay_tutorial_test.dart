@@ -34,9 +34,11 @@ void main() {
           ),
         ),
       );
-      await widgetTester.pumpWidget(_wrapMaterialApp(
-        child: overlayTutorialScope,
-      ));
+      await widgetTester.pumpWidget(
+        _wrapMaterialApp(
+          child: overlayTutorialScope,
+        ),
+      );
 
       await widgetTester.pumpAndSettle();
       expect(find.byWidget(overlayTutorialScope), findsOneWidget);
@@ -77,9 +79,11 @@ void main() {
               ),
             ),
           );
-          await widgetTester.pumpWidget(_wrapMaterialApp(
-            child: overlayTutorialScope,
-          ));
+          await widgetTester.pumpWidget(
+            _wrapMaterialApp(
+              child: overlayTutorialScope,
+            ),
+          );
 
           await widgetTester.pumpAndSettle();
           expect(find.byWidget(overlayTutorialScope), findsOneWidget);
@@ -117,9 +121,11 @@ void main() {
               ),
             ),
           );
-          await widgetTester.pumpWidget(_wrapMaterialApp(
-            child: overlayTutorialScope,
-          ));
+          await widgetTester.pumpWidget(
+            _wrapMaterialApp(
+              child: overlayTutorialScope,
+            ),
+          );
 
           await widgetTester.pumpAndSettle();
           expect(find.byWidget(overlayTutorialScope), findsOneWidget);
@@ -161,9 +167,11 @@ void main() {
               ),
             ),
           );
-          await widgetTester.pumpWidget(_wrapMaterialApp(
-            child: overlayTutorialScope,
-          ));
+          await widgetTester.pumpWidget(
+            _wrapMaterialApp(
+              child: overlayTutorialScope,
+            ),
+          );
 
           await widgetTester.pumpAndSettle();
           expect(find.byWidget(overlayTutorialScope), findsOneWidget);
@@ -197,12 +205,14 @@ void main() {
                           PathOperation.difference,
                           path,
                           Path()
-                            ..addOval(Rect.fromLTWH(
-                              rect.left - 16,
-                              rect.top,
-                              112,
-                              64,
-                            )),
+                            ..addOval(
+                              Rect.fromLTWH(
+                                rect.left - 16,
+                                rect.top,
+                                112,
+                                64,
+                              ),
+                            ),
                         );
                         return path;
                       },
@@ -213,9 +223,11 @@ void main() {
               ),
             ),
           );
-          await widgetTester.pumpWidget(_wrapMaterialApp(
-            child: overlayTutorialScope,
-          ));
+          await widgetTester.pumpWidget(
+            _wrapMaterialApp(
+              child: overlayTutorialScope,
+            ),
+          );
 
           await widgetTester.pumpAndSettle();
           expect(find.byWidget(overlayTutorialScope), findsOneWidget);
@@ -270,9 +282,11 @@ void main() {
           );
         },
       );
-      await widgetTester.pumpWidget(_wrapMaterialApp(
-        child: overlayTutorialScope,
-      ));
+      await widgetTester.pumpWidget(
+        _wrapMaterialApp(
+          child: overlayTutorialScope,
+        ),
+      );
 
       await widgetTester.pumpAndSettle();
       expect(find.byWidget(overlayTutorialScope), findsOneWidget);

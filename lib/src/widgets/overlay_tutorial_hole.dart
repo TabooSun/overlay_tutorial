@@ -15,7 +15,7 @@ class OverlayTutorialHole extends SingleChildRenderObjectWidget {
   /// See also [OverlayTutorialScope.enabled].
   final bool enabled;
 
-  OverlayTutorialHole({
+  const OverlayTutorialHole({
     Key? key,
     required this.overlayTutorialEntry,
     required this.enabled,
@@ -27,7 +27,7 @@ class OverlayTutorialHole extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return _RenderOverlayTutorialHole(
+    return RenderOverlayTutorialHole(
       overlayTutorialHole: this,
       context: context,
       overlayTutorialEntry: overlayTutorialEntry,
@@ -38,7 +38,7 @@ class OverlayTutorialHole extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
     BuildContext context,
-    covariant _RenderOverlayTutorialHole renderObject,
+    covariant RenderOverlayTutorialHole renderObject,
   ) {
     renderObject
       ..context = context
@@ -47,7 +47,7 @@ class OverlayTutorialHole extends SingleChildRenderObjectWidget {
   }
 }
 
-class _RenderOverlayTutorialHole extends RenderProxyBox {
+class RenderOverlayTutorialHole extends RenderProxyBox {
   /// The widget that holds this [RenderProxyBox]. Theoretically, this won't
   /// change by any means.
   final OverlayTutorialHole _overlayTutorialHole;
@@ -84,7 +84,7 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
     markNeedsPaint();
   }
 
-  _RenderOverlayTutorialHole({
+  RenderOverlayTutorialHole({
     required OverlayTutorialHole overlayTutorialHole,
     required BuildContext context,
     required OverlayTutorialEntry overlayTutorialEntry,
@@ -97,11 +97,11 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
         super(child);
 
   @override
-  void paint(PaintingContext paintingContext, Offset offset) {
+  void paint(PaintingContext context, Offset offset) {
     if (!enabled || child == null) {
-      super.paint(paintingContext, offset);
+      super.paint(context, offset);
     } else {
-      paintingContext.pushLayer(
+      context.pushLayer(
         OverlayTutorialHoleLayer(
           updateChildRect: updateChildRect,
         ),
@@ -115,7 +115,7 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
 
   void updateChildRect() {
     final overlayTutorialScopeState =
-        context.findAncestorStateOfType<_OverlayTutorialScopeState>();
+        context.findAncestorStateOfType<OverlayTutorialScopeState>();
     if (overlayTutorialScopeState == null) return;
 
     if (!enabled) {
@@ -154,11 +154,19 @@ class _RenderOverlayTutorialHole extends RenderProxyBox {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<OverlayTutorialEntry>(
-        'overlayTutorialEntry', overlayTutorialEntry));
+    properties.add(
+      DiagnosticsProperty<OverlayTutorialEntry>(
+        'overlayTutorialEntry',
+        overlayTutorialEntry,
+      ),
+    );
     properties.add(DiagnosticsProperty<bool>('enabled', enabled));
     properties.add(DiagnosticsProperty<BuildContext>('context', context));
-    properties.add(DiagnosticsProperty<OverlayTutorialHole>(
-        '_overlayTutorialHole', _overlayTutorialHole));
+    properties.add(
+      DiagnosticsProperty<OverlayTutorialHole>(
+        '_overlayTutorialHole',
+        _overlayTutorialHole,
+      ),
+    );
   }
 }
