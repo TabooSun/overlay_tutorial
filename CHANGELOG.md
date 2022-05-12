@@ -1,3 +1,7 @@
+## [3.0.0] - 12/5/2022
+
+- Close [#40](https://github.com/TabooSun/overlay_tutorial/issues/40) - Flutter 3 compatibility. (Thanks [@daadu](https://github.com/daadu))
+
 ## [2.2.2] - 21/03/2022
 
 - Fix broken screenshot in README.
