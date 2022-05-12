@@ -4,6 +4,7 @@ description: A Flutter package for displaying overlay tutorial by cutting a hole
 repository: https://github.com/TabooSun/overlay_tutorial
 environment:
   sdk: '>=2.12.0-0 <3.0.0'
+  flutter: '>=3.0.0'
 dependencies:
   flutter:
     sdk: flutter
